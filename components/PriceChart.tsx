@@ -409,12 +409,13 @@ export function PriceChart({
                       stroke="#fff"
                       strokeWidth={2}
                       isAnimationActive={false}
-                      shape={(props: { cx?: number; cy?: number }) => {
-                        if (props.cx && props.cy) {
+                      shape={(props: unknown) => {
+                        const p = props as { cx?: number; cy?: number }
+                        if (p.cx && p.cy) {
                           return (
                             <circle
-                              cx={props.cx}
-                              cy={props.cy}
+                              cx={p.cx}
+                              cy={p.cy}
                               r={6}
                               fill={HIST_PRED_COLOR}
                               stroke="#fff"
@@ -422,7 +423,7 @@ export function PriceChart({
                             />
                           )
                         }
-                        return null
+                        return <g />
                       }}
                     />
                   )}
