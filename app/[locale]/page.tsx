@@ -69,7 +69,7 @@ export default function Home() {
         const [pricesData, predictionsData, historicalPredData, weatherData] = await Promise.all([
           fetchPrices(start, end),
           fetchPredictions().catch(() => []), // Don't fail if predictions unavailable
-          fetchHistoricalPredictions(start, new Date()).catch(() => []), // Don't fail if historical predictions unavailable
+          fetchHistoricalPredictions(start, end).catch(() => []), // Fetch for full price range (prices are known ahead from NordPool)
           fetchWeather(view).catch(() => []), // Don't fail if weather unavailable
         ])
 

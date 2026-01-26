@@ -8,6 +8,7 @@ import {
   ComposedChart,
   Area,
   Line,
+  Scatter,
   XAxis,
   YAxis,
   Tooltip,
@@ -399,24 +400,29 @@ export function PriceChart({
                       }}
                     />
                   )}
-                  {/* Historical predictions - dotted orange line */}
+                  {/* Historical predictions - orange scatter points */}
                   {displayHistoricalPrediction && (
-                    <Line
+                    <Scatter
                       yAxisId="price"
-                      type="natural"
                       dataKey="histPrediction"
-                      stroke={HIST_PRED_COLOR}
-                      strokeWidth={1.5}
-                      strokeDasharray="2 4"
-                      strokeOpacity={0.8}
+                      fill={HIST_PRED_COLOR}
+                      stroke="#fff"
+                      strokeWidth={2}
                       isAnimationActive={false}
-                      connectNulls={true}
-                      dot={false}
-                      activeDot={{
-                        r: 3,
-                        fill: HIST_PRED_COLOR,
-                        stroke: "#fff",
-                        strokeWidth: 2
+                      shape={(props: { cx?: number; cy?: number }) => {
+                        if (props.cx && props.cy) {
+                          return (
+                            <circle
+                              cx={props.cx}
+                              cy={props.cy}
+                              r={6}
+                              fill={HIST_PRED_COLOR}
+                              stroke="#fff"
+                              strokeWidth={2}
+                            />
+                          )
+                        }
+                        return null
                       }}
                     />
                   )}
