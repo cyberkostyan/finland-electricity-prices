@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -37,6 +38,9 @@ interface ChartDataPoint {
   isPrediction?: boolean
 }
 
+// Purple color for temperature (distinct from orange "Now" marker)
+const TEMP_COLOR = "#8b5cf6"
+
 export function PriceChart({
   prices,
   predictions = [],
@@ -46,6 +50,7 @@ export function PriceChart({
   loading,
 }: PriceChartProps) {
   const t = useTranslations()
+  const [showTemperature, setShowTemperature] = useState(true)
   const stats = calculateStats(prices)
 
   const now = new Date()
@@ -153,6 +158,7 @@ export function PriceChart({
 
   // Check if we have temperature data
   const hasTemperature = chartData.some(d => d.temperature !== undefined)
+  const displayTemperature = hasTemperature && showTemperature
 
   const getPriceColor = (price: number) => {
     if (price < 5) return "hsl(142, 76%, 36%)"
@@ -174,8 +180,8 @@ export function PriceChart({
           <p className="text-lg font-bold" style={{ color: isPred ? "#06b6d4" : getPriceColor(value) }}>
             {formatPrice(value)} <span className="text-xs font-normal text-muted-foreground">{t("price.centsPerKwh")}</span>
           </p>
-          {data.temperature !== undefined && (
-            <p className="text-sm text-orange-500 mt-1">
+          {data.temperature !== undefined && showTemperature && (
+            <p className="text-sm mt-1" style={{ color: TEMP_COLOR }}>
               {data.temperature.toFixed(1)}°C
             </p>
           )}
@@ -221,7 +227,7 @@ export function PriceChart({
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart
                   data={chartData}
-                  margin={{ top: 20, right: hasTemperature ? 45 : 20, left: 0, bottom: 0 }}
+                  margin={{ top: 20, right: displayTemperature ? 45 : 20, left: 0, bottom: 0 }}
                 >
                   <defs>
                     <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
@@ -247,16 +253,16 @@ export function PriceChart({
                     domain={["dataMin - 2", "dataMax + 2"]}
                     width={45}
                   />
-                  {hasTemperature && (
+                  {displayTemperature && (
                     <YAxis
                       yAxisId="temp"
                       orientation="right"
-                      tick={{ fontSize: 11, fill: "#f97316" }}
+                      tick={{ fontSize: 11, fill: TEMP_COLOR }}
                       tickLine={false}
                       axisLine={false}
-                      tickFormatter={(value) => `${value}°`}
+                      tickFormatter={(value) => `${Math.round(value)}°`}
                       domain={["dataMin - 5", "dataMax + 5"]}
-                      width={40}
+                      width={35}
                     />
                   )}
                   <Tooltip
@@ -277,12 +283,12 @@ export function PriceChart({
                     }}
                   />
                   {/* Temperature line */}
-                  {hasTemperature && (
+                  {displayTemperature && (
                     <Line
                       yAxisId="temp"
                       type="monotone"
                       dataKey="temperature"
-                      stroke="#f97316"
+                      stroke={TEMP_COLOR}
                       strokeWidth={1.5}
                       strokeOpacity={0.7}
                       isAnimationActive={false}
@@ -380,10 +386,20 @@ export function PriceChart({
                 </div>
               )}
               {hasTemperature && (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-0.5 bg-orange-500" />
+                <button
+                  onClick={() => setShowTemperature(!showTemperature)}
+                  className={`flex items-center gap-2 px-2 py-1 rounded transition-colors ${
+                    showTemperature
+                      ? "bg-violet-100 dark:bg-violet-900/30"
+                      : "opacity-50 hover:opacity-75"
+                  }`}
+                >
+                  <div
+                    className="w-4 h-0.5"
+                    style={{ backgroundColor: TEMP_COLOR, opacity: showTemperature ? 1 : 0.5 }}
+                  />
                   <span>{t("chart.temperature")}</span>
-                </div>
+                </button>
               )}
             </div>
             <div className="grid grid-cols-3 gap-4 p-4 border-t bg-muted/30">
