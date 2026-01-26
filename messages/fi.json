@@ -94,7 +94,8 @@
     "data": "Data",
     "predictions": "Ennusteet",
     "vatNote": "Hinnat sisältävät 25,5% ALV. Ajat Suomen aikaa (EET/EEST).",
-    "supportProject": "Tue projektia"
+    "supportProject": "Tue projektia",
+    "privacy": "Tietosuoja"
   },
   "privacy": {
     "title": "Tietosuojakäytäntö",

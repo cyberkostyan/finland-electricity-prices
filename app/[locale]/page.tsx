@@ -194,7 +194,13 @@ export default function Home() {
               nordpool-predict-fi
             </a>
           </p>
-          <p className="mt-2">{t("footer.vatNote")}</p>
+          <p className="mt-2">
+            {t("footer.vatNote")}
+            {" • "}
+            <Link href="/privacy" className="underline hover:text-foreground">
+              {t("footer.privacy")}
+            </Link>
+          </p>
           <div className="mt-4">
             <a
               href="https://revolut.me/cyberkosta"

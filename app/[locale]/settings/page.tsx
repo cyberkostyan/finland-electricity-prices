@@ -47,7 +47,13 @@ export default function SettingsPage() {
 
         {/* Footer */}
         <footer className="mt-12 pt-6 border-t text-center text-sm text-muted-foreground">
-          <p>{t("alerts.notificationsRequirePermission")}</p>
+          <p>
+            {t("alerts.notificationsRequirePermission")}
+            {" • "}
+            <Link href="/privacy" className="underline hover:text-foreground">
+              {t("footer.privacy")}
+            </Link>
+          </p>
         </footer>
       </div>
     </main>

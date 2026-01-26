@@ -230,6 +230,10 @@ export default function HistoryPage() {
               sahkotin.fi
             </a>
             {" • "}{t("footer.vatNote")}
+            {" • "}
+            <Link href="/privacy" className="underline hover:text-foreground">
+              {t("footer.privacy")}
+            </Link>
           </p>
         </footer>
       </div>

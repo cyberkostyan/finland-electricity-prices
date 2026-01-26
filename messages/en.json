@@ -94,7 +94,8 @@
     "data": "Data",
     "predictions": "Predictions",
     "vatNote": "Prices include 25.5% VAT. All times in Finnish time (EET/EEST).",
-    "supportProject": "Support the project"
+    "supportProject": "Support the project",
+    "privacy": "Privacy"
   },
   "privacy": {
     "title": "Privacy Policy",
