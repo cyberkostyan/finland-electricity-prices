@@ -1,0 +1,70 @@
+{
+  "common": {
+    "appName": "Finland Electricity Prices",
+    "appNameShort": "FEP",
+    "tagline": "Real-time spot prices with VAT",
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "refresh": "Refresh",
+    "settings": "Settings",
+    "history": "History",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "now": "Now",
+    "updated": "Updated"
+  },
+  "price": {
+    "currentPrice": "Current Price",
+    "priceHistory": "Price History",
+    "cheap": "Cheap",
+    "normal": "Normal",
+    "expensive": "Expensive",
+    "vsLastHour": "vs last hour",
+    "centsPerKwh": "c/kWh",
+    "min": "Min",
+    "max": "Max",
+    "average": "Average",
+    "avg": "Avg"
+  },
+  "chart": {
+    "24h": "24h",
+    "7days": "7 Days",
+    "30days": "30 Days",
+    "officialPrice": "Official price",
+    "mlPrediction": "ML Prediction",
+    "prediction": "prediction"
+  },
+  "bestHours": {
+    "title": "Best Hours",
+    "titleFull": "Best Hours to Use Electricity",
+    "cheapest": "Cheapest",
+    "tip": "Schedule high-consumption activities like laundry, dishwasher, or EV charging during these hours to save money."
+  },
+  "alerts": {
+    "title": "Price Alerts",
+    "enableNotifications": "Enable Notifications",
+    "enableDescription": "Get notified when prices are low or high",
+    "lowPriceAlert": "Low price alert",
+    "highPriceAlert": "High price alert",
+    "lowPriceDescription": "Notify when price drops below this level",
+    "highPriceDescription": "Warn when price exceeds this level",
+    "sendTestNotification": "Send Test Notification",
+    "notificationsBlocked": "Notifications are blocked. Please enable them in your browser settings.",
+    "notificationsRequirePermission": "Notifications require browser permission."
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Configure alerts and preferences"
+  },
+  "history": {
+    "title": "Price History",
+    "description": "Monthly electricity price statistics",
+    "noData": "No historical data available"
+  },
+  "footer": {
+    "data": "Data",
+    "predictions": "Predictions",
+    "vatNote": "Prices include 25.5% VAT. All times in Finnish time (EET/EEST)."
+  }
+}

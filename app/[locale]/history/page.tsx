@@ -1,10 +1,12 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Link from "next/link"
+import { useTranslations } from "next-intl"
+import { Link } from "@/i18n/navigation"
 import { MonthlyStatsCard } from "@/components/MonthlyStatsCard"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/ThemeToggle"
+import { LanguageSwitcher } from "@/components/LanguageSwitcher"
 import { Zap, ArrowLeft, Loader2 } from "lucide-react"
 import { fetchPrices, type PriceData } from "@/lib/api"
 
@@ -28,14 +30,24 @@ interface MonthData {
 }
 
 const MONTH_NAMES = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ]
 
 function groupByDay(prices: PriceData[]): DailyAverage[] {
   const days = new Map<string, PriceData[]>()
 
-  prices.forEach(p => {
+  prices.forEach((p) => {
     const date = new Date(p.date)
     const dayKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
     if (!days.has(dayKey)) {
@@ -46,7 +58,7 @@ function groupByDay(prices: PriceData[]): DailyAverage[] {
 
   return Array.from(days.entries())
     .map(([date, dayPrices]) => {
-      const values = dayPrices.map(p => p.value)
+      const values = dayPrices.map((p) => p.value)
       return {
         date,
         avg: values.reduce((a, b) => a + b, 0) / values.length,
@@ -57,12 +69,16 @@ function groupByDay(prices: PriceData[]): DailyAverage[] {
     .sort((a, b) => a.date.localeCompare(b.date))
 }
 
-function calculateMonthStats(data: DailyAverage[]): { min: number; max: number; avg: number } {
+function calculateMonthStats(data: DailyAverage[]): {
+  min: number
+  max: number
+  avg: number
+} {
   if (data.length === 0) return { min: 0, max: 0, avg: 0 }
 
-  const allMins = data.map(d => d.min)
-  const allMaxs = data.map(d => d.max)
-  const allAvgs = data.map(d => d.avg)
+  const allMins = data.map((d) => d.min)
+  const allMaxs = data.map((d) => d.max)
+  const allAvgs = data.map((d) => d.avg)
 
   return {
     min: Math.min(...allMins),
@@ -72,6 +88,7 @@ function calculateMonthStats(data: DailyAverage[]): { min: number; max: number; 
 }
 
 export default function HistoryPage() {
+  const t = useTranslations()
   const [months, setMonths] = useState<MonthData[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -89,8 +106,19 @@ export default function HistoryPage() {
         // Fetch data for each month (we'll do 6 months to avoid too many requests)
         for (let i = 0; i < 6; i++) {
           const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1)
-          const startOfMonth = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1)
-          const endOfMonth = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0, 23, 59, 59)
+          const startOfMonth = new Date(
+            monthDate.getFullYear(),
+            monthDate.getMonth(),
+            1
+          )
+          const endOfMonth = new Date(
+            monthDate.getFullYear(),
+            monthDate.getMonth() + 1,
+            0,
+            23,
+            59,
+            59
+          )
 
           // Skip future dates
           if (startOfMonth > now) continue
@@ -114,7 +142,9 @@ export default function HistoryPage() {
               })
             }
           } catch (e) {
-            console.error(`Failed to load data for ${MONTH_NAMES[monthDate.getMonth()]} ${monthDate.getFullYear()}`)
+            console.error(
+              `Failed to load data for ${MONTH_NAMES[monthDate.getMonth()]} ${monthDate.getFullYear()}`
+            )
           }
         }
 
@@ -145,13 +175,16 @@ export default function HistoryPage() {
               <Zap className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold">Price History</h1>
+              <h1 className="text-2xl font-bold">{t("history.title")}</h1>
               <p className="text-muted-foreground text-sm">
-                Monthly electricity price statistics
+                {t("history.description")}
               </p>
             </div>
           </div>
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
         </div>
 
         {/* Content */}
@@ -160,12 +193,10 @@ export default function HistoryPage() {
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
         ) : error ? (
-          <div className="text-center text-destructive py-8">
-            {error}
-          </div>
+          <div className="text-center text-destructive py-8">{error}</div>
         ) : months.length === 0 ? (
           <div className="text-center text-muted-foreground py-8">
-            No historical data available
+            {t("history.noData")}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -176,7 +207,11 @@ export default function HistoryPage() {
                 year={monthData.year}
                 data={monthData.data}
                 stats={monthData.stats}
-                previousAvg={index < months.length - 1 ? months[index + 1]?.stats.avg : undefined}
+                previousAvg={
+                  index < months.length - 1
+                    ? months[index + 1]?.stats.avg
+                    : undefined
+                }
               />
             ))}
           </div>
@@ -185,7 +220,7 @@ export default function HistoryPage() {
         {/* Footer */}
         <footer className="mt-12 pt-6 border-t text-center text-sm text-muted-foreground">
           <p>
-            Data from{" "}
+            {t("footer.data")}:{" "}
             <a
               href="https://sahkotin.fi"
               target="_blank"
@@ -194,7 +229,7 @@ export default function HistoryPage() {
             >
               sahkotin.fi
             </a>
-            {" "}• Prices include 25.5% VAT
+            {" • "}{t("footer.vatNote")}
           </p>
         </footer>
       </div>

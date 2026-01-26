@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
@@ -41,6 +42,7 @@ export function PriceChart({
   onViewChange,
   loading,
 }: PriceChartProps) {
+  const t = useTranslations()
   const stats = calculateStats(prices)
 
   const now = new Date()
@@ -125,15 +127,11 @@ export function PriceChart({
   // Add bridge point: last price also as prediction start
   if (prices.length > 0 && futurePredictions.length > 0) {
     const lastPrice = prices[prices.length - 1]
-    const bridgeDate = new Date(lastPrice.date)
     priceData[priceData.length - 1].prediction = lastPrice.value
   }
 
   // Combine data
   const chartData: ChartDataPoint[] = [...priceData, ...predictionData]
-
-  // Find current data point
-  const currentIndex = chartData.findIndex(d => d.isCurrent)
 
   const getPriceColor = (price: number) => {
     if (price < 5) return "hsl(142, 76%, 36%)"
@@ -150,10 +148,10 @@ export function PriceChart({
         <div className="bg-background/95 backdrop-blur-sm border border-border/50 rounded-lg shadow-xl px-3 py-2">
           <p className="text-xs text-muted-foreground mb-1">
             {data.fullTime}
-            {isPred && <span className="ml-2 text-cyan-500">(prediction)</span>}
+            {isPred && <span className="ml-2 text-cyan-500">({t("chart.prediction")})</span>}
           </p>
           <p className="text-lg font-bold" style={{ color: isPred ? "#06b6d4" : getPriceColor(value) }}>
-            {formatPrice(value)} <span className="text-xs font-normal text-muted-foreground">c/kWh</span>
+            {formatPrice(value)} <span className="text-xs font-normal text-muted-foreground">{t("price.centsPerKwh")}</span>
           </p>
         </div>
       )
@@ -176,12 +174,12 @@ export function PriceChart({
     <Card className="overflow-hidden">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-medium">Price History</CardTitle>
+          <CardTitle className="text-lg font-medium">{t("price.priceHistory")}</CardTitle>
           <Tabs value={view} onValueChange={(v) => onViewChange(v as any)}>
             <TabsList className="grid grid-cols-3 w-auto">
-              <TabsTrigger value="24h" className="text-xs px-3">24h</TabsTrigger>
-              <TabsTrigger value="7d" className="text-xs px-3">7 Days</TabsTrigger>
-              <TabsTrigger value="30d" className="text-xs px-3">30 Days</TabsTrigger>
+              <TabsTrigger value="24h" className="text-xs px-3">{t("chart.24h")}</TabsTrigger>
+              <TabsTrigger value="7d" className="text-xs px-3">{t("chart.7days")}</TabsTrigger>
+              <TabsTrigger value="30d" className="text-xs px-3">{t("chart.30days")}</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -232,7 +230,7 @@ export function PriceChart({
                     strokeDasharray="4 4"
                     strokeOpacity={0.6}
                     label={{
-                      value: `Avg ${stats.avg.toFixed(1)}`,
+                      value: `${t("price.avg")} ${stats.avg.toFixed(1)}`,
                       position: "insideTopRight",
                       fill: "hsl(var(--muted-foreground))",
                       fontSize: 10,
@@ -269,7 +267,7 @@ export function PriceChart({
                               fontSize={11}
                               fontWeight={700}
                             >
-                              Now
+                              {t("common.now")}
                             </text>
                             <circle
                               cx={cx}
@@ -318,31 +316,31 @@ export function PriceChart({
               <div className="flex items-center justify-center gap-6 px-4 py-2 text-xs text-muted-foreground border-t">
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-0.5 bg-primary" />
-                  <span>Official price</span>
+                  <span>{t("chart.officialPrice")}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-0.5 border-t-2 border-dashed border-cyan-500" />
-                  <span>ML Prediction</span>
+                  <span>{t("chart.mlPrediction")}</span>
                 </div>
               </div>
             )}
             <div className="grid grid-cols-3 gap-4 p-4 border-t bg-muted/30">
               <div className="text-center">
-                <div className="text-xs text-muted-foreground uppercase tracking-wide">Min</div>
+                <div className="text-xs text-muted-foreground uppercase tracking-wide">{t("price.min")}</div>
                 <div className="font-bold text-green-600 dark:text-green-400">
-                  {formatPrice(stats.min)} <span className="text-xs font-normal">c/kWh</span>
+                  {formatPrice(stats.min)} <span className="text-xs font-normal">{t("price.centsPerKwh")}</span>
                 </div>
               </div>
               <div className="text-center border-x border-border/50">
-                <div className="text-xs text-muted-foreground uppercase tracking-wide">Average</div>
+                <div className="text-xs text-muted-foreground uppercase tracking-wide">{t("price.average")}</div>
                 <div className="font-bold">
-                  {formatPrice(stats.avg)} <span className="text-xs font-normal text-muted-foreground">c/kWh</span>
+                  {formatPrice(stats.avg)} <span className="text-xs font-normal text-muted-foreground">{t("price.centsPerKwh")}</span>
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-xs text-muted-foreground uppercase tracking-wide">Max</div>
+                <div className="text-xs text-muted-foreground uppercase tracking-wide">{t("price.max")}</div>
                 <div className="font-bold text-red-600 dark:text-red-400">
-                  {formatPrice(stats.max)} <span className="text-xs font-normal">c/kWh</span>
+                  {formatPrice(stats.max)} <span className="text-xs font-normal">{t("price.centsPerKwh")}</span>
                 </div>
               </div>
             </div>

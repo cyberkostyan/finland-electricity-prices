@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import { useTranslations } from "next-intl"
 import { PriceDisplay } from "@/components/PriceDisplay"
 import { PriceChart } from "@/components/PriceChart"
 import { BestHours } from "@/components/BestHours"
@@ -11,12 +12,14 @@ import {
   getPreviousPrice,
   type PriceData,
 } from "@/lib/api"
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
 import { Zap, RefreshCw, History, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/ThemeToggle"
+import { LanguageSwitcher } from "@/components/LanguageSwitcher"
 
 export default function Home() {
+  const t = useTranslations()
   const [prices, setPrices] = useState<PriceData[]>([])
   const [predictions, setPredictions] = useState<PriceData[]>([])
   const [view, setView] = useState<"24h" | "7d" | "30d">("24h")
@@ -103,24 +106,24 @@ export default function Home() {
             </div>
             <div>
               <h1 className="text-2xl font-bold">
-                <span className="sm:hidden">FEP</span>
-                <span className="hidden sm:inline">Finland Electricity Prices</span>
+                <span className="sm:hidden">{t("common.appNameShort")}</span>
+                <span className="hidden sm:inline">{t("common.appName")}</span>
               </h1>
               <p className="text-muted-foreground text-sm hidden sm:block">
-                Real-time spot prices with VAT
+                {t("common.tagline")}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
             {lastUpdate && (
               <span className="text-sm text-muted-foreground hidden md:block">
-                Updated: {lastUpdate.toLocaleTimeString("fi-FI")}
+                {t("common.updated")}: {lastUpdate.toLocaleTimeString("fi-FI")}
               </span>
             )}
             <Link href="/history">
               <Button variant="outline" size="sm">
                 <History className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">History</span>
+                <span className="hidden sm:inline">{t("common.history")}</span>
               </Button>
             </Link>
             <Link href="/settings">
@@ -128,6 +131,7 @@ export default function Home() {
                 <Settings className="h-4 w-4" />
               </Button>
             </Link>
+            <LanguageSwitcher />
             <ThemeToggle />
             <Button
               variant="outline"
@@ -138,7 +142,7 @@ export default function Home() {
               <RefreshCw
                 className={`h-4 w-4 mr-2 ${refreshing ? "animate-spin" : ""}`}
               />
-              <span className="hidden sm:inline">Refresh</span>
+              <span className="hidden sm:inline">{t("common.refresh")}</span>
             </Button>
           </div>
         </div>
@@ -165,7 +169,7 @@ export default function Home() {
         {/* Footer */}
         <footer className="mt-12 pt-6 border-t text-center text-sm text-muted-foreground">
           <p>
-            Data:{" "}
+            {t("footer.data")}:{" "}
             <a
               href="https://sahkotin.fi"
               target="_blank"
@@ -174,7 +178,7 @@ export default function Home() {
             >
               sahkotin.fi
             </a>
-            {" • Predictions: "}
+            {" • "}{t("footer.predictions")}: {" "}
             <a
               href="https://github.com/vividfog/nordpool-predict-fi"
               target="_blank"
@@ -184,9 +188,7 @@ export default function Home() {
               nordpool-predict-fi
             </a>
           </p>
-          <p className="mt-2">
-            Prices include 25.5% VAT. All times in Finnish time (EET/EEST).
-          </p>
+          <p className="mt-2">{t("footer.vatNote")}</p>
         </footer>
       </div>
     </main>

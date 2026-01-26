@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { TrendingUp, TrendingDown, Minus } from "lucide-react"
@@ -17,11 +18,13 @@ export function PriceDisplay({
   previousPrice,
   loading,
 }: PriceDisplayProps) {
+  const t = useTranslations()
+
   if (loading) {
     return (
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg font-medium">Current Price</CardTitle>
+          <CardTitle className="text-lg font-medium">{t("price.currentPrice")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="animate-pulse">
@@ -52,16 +55,16 @@ export function PriceDisplay({
   }
 
   const getPriceLevel = (price: number) => {
-    if (price < 5) return "Cheap"
-    if (price < 10) return "Normal"
-    return "Expensive"
+    if (price < 5) return t("price.cheap")
+    if (price < 10) return t("price.normal")
+    return t("price.expensive")
   }
 
   return (
     <Card>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-medium">Current Price</CardTitle>
+          <CardTitle className="text-lg font-medium">{t("price.currentPrice")}</CardTitle>
           <Badge variant={getBadgeVariant(price)}>{getPriceLevel(price)}</Badge>
         </div>
       </CardHeader>
@@ -70,7 +73,7 @@ export function PriceDisplay({
           <span className={`text-4xl font-bold ${getPriceColor(price)}`}>
             {formatPrice(price)}
           </span>
-          <span className="text-muted-foreground mb-1">c/kWh</span>
+          <span className="text-muted-foreground mb-1">{t("price.centsPerKwh")}</span>
         </div>
         <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
           {getTrendIcon()}
@@ -79,7 +82,7 @@ export function PriceDisplay({
             {formatPrice(trend)} ({trendPercent > 0 ? "+" : ""}
             {trendPercent.toFixed(1)}%)
           </span>
-          <span>vs last hour</span>
+          <span>{t("price.vsLastHour")}</span>
         </div>
       </CardContent>
     </Card>

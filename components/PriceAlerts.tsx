@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
@@ -36,6 +37,7 @@ function loadSettings(): AlertSettings {
 }
 
 export function PriceAlerts() {
+  const t = useTranslations()
   const [settings, setSettings] = useState<AlertSettings>(DEFAULT_SETTINGS)
   const [permissionStatus, setPermissionStatus] = useState<NotificationPermission>("default")
   const [isLoaded, setIsLoaded] = useState(false)
@@ -66,8 +68,8 @@ export function PriceAlerts() {
       if (permission === "granted") {
         setSettings((s) => ({ ...s, enabled: true }))
         // Show test notification
-        new Notification("Price Alerts Enabled", {
-          body: "You will be notified when electricity prices change significantly.",
+        new Notification(t("common.appName"), {
+          body: t("alerts.enableDescription"),
           icon: "/favicon.ico",
         })
       }
@@ -91,15 +93,15 @@ export function PriceAlerts() {
           ) : (
             <BellOff className="h-5 w-5 text-muted-foreground" />
           )}
-          <CardTitle className="text-lg font-medium">Price Alerts</CardTitle>
+          <CardTitle className="text-lg font-medium">{t("alerts.title")}</CardTitle>
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex items-center justify-between">
           <Label htmlFor="alerts-toggle" className="flex flex-col">
-            <span>Enable Notifications</span>
+            <span>{t("alerts.enableNotifications")}</span>
             <span className="text-sm text-muted-foreground font-normal">
-              Get notified when prices are low or high
+              {t("alerts.enableDescription")}
             </span>
           </Label>
           <Switch
@@ -111,16 +113,16 @@ export function PriceAlerts() {
 
         {permissionStatus === "denied" && (
           <div className="p-3 bg-destructive/10 text-destructive rounded-lg text-sm">
-            Notifications are blocked. Please enable them in your browser settings.
+            {t("alerts.notificationsBlocked")}
           </div>
         )}
 
         <div className="space-y-4">
           <div className="space-y-2">
             <Label className="flex items-center justify-between">
-              <span>Low price alert</span>
+              <span>{t("alerts.lowPriceAlert")}</span>
               <span className="text-green-600 font-medium">
-                {"<"} {settings.lowPriceThreshold} c/kWh
+                {"<"} {settings.lowPriceThreshold} {t("price.centsPerKwh")}
               </span>
             </Label>
             <Slider
@@ -134,15 +136,15 @@ export function PriceAlerts() {
               disabled={!settings.enabled}
             />
             <p className="text-xs text-muted-foreground">
-              Notify when price drops below this level
+              {t("alerts.lowPriceDescription")}
             </p>
           </div>
 
           <div className="space-y-2">
             <Label className="flex items-center justify-between">
-              <span>High price alert</span>
+              <span>{t("alerts.highPriceAlert")}</span>
               <span className="text-red-600 font-medium">
-                {">"} {settings.highPriceThreshold} c/kWh
+                {">"} {settings.highPriceThreshold} {t("price.centsPerKwh")}
               </span>
             </Label>
             <Slider
@@ -156,7 +158,7 @@ export function PriceAlerts() {
               disabled={!settings.enabled}
             />
             <p className="text-xs text-muted-foreground">
-              Warn when price exceeds this level
+              {t("alerts.highPriceDescription")}
             </p>
           </div>
         </div>
@@ -166,25 +168,19 @@ export function PriceAlerts() {
             variant="outline"
             className="w-full"
             onClick={async () => {
-              console.log("Test notification clicked")
-              console.log("Notification in window:", "Notification" in window)
-
               if (!("Notification" in window)) {
                 alert("This browser does not support notifications")
                 return
               }
 
-              console.log("Current permission:", Notification.permission)
               const currentPermission = Notification.permission
 
               if (currentPermission === "granted") {
                 try {
-                  console.log("Creating notification...")
-                  const notification = new Notification("Finland Electricity Prices", {
-                    body: `Low alert: < ${settings.lowPriceThreshold} c/kWh\nHigh alert: > ${settings.highPriceThreshold} c/kWh`,
+                  const notification = new Notification(t("common.appName"), {
+                    body: `${t("alerts.lowPriceAlert")}: < ${settings.lowPriceThreshold} ${t("price.centsPerKwh")}\n${t("alerts.highPriceAlert")}: > ${settings.highPriceThreshold} ${t("price.centsPerKwh")}`,
                     tag: "test-notification",
                   })
-                  console.log("Notification created:", notification)
                   notification.onclick = () => {
                     window.focus()
                     notification.close()
@@ -195,20 +191,16 @@ export function PriceAlerts() {
                   alert(`Failed to send notification: ${errorMessage}`)
                 }
               } else if (currentPermission === "denied") {
-                alert("Notifications are blocked. Please enable them in browser settings.")
+                alert(t("alerts.notificationsBlocked"))
               } else {
-                console.log("Requesting permission...")
                 try {
                   const permission = await Notification.requestPermission()
-                  console.log("Permission result:", permission)
                   setPermissionStatus(permission)
                   if (permission === "granted") {
-                    new Notification("Finland Electricity Prices", {
-                      body: "Notifications enabled successfully!",
+                    new Notification(t("common.appName"), {
+                      body: t("alerts.enableDescription"),
                       tag: "test-notification",
                     })
-                  } else {
-                    alert(`Permission ${permission}. Cannot send notifications.`)
                   }
                 } catch (err: unknown) {
                   console.error("Permission request failed:", err)
@@ -218,7 +210,7 @@ export function PriceAlerts() {
               }
             }}
           >
-            Send Test Notification
+            {t("alerts.sendTestNotification")}
           </Button>
         )}
       </CardContent>

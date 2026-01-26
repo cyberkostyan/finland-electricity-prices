@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Clock, Zap } from "lucide-react"
@@ -17,6 +18,7 @@ interface BestHoursProps {
 }
 
 export function BestHours({ refreshTrigger, compact = false }: BestHoursProps) {
+  const t = useTranslations()
   const [cheapestHours, setCheapestHours] = useState<CheapHour[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -31,7 +33,7 @@ export function BestHours({ refreshTrigger, compact = false }: BestHoursProps) {
         setCheapestHours(data)
         setError(null)
       } catch (err) {
-        setError("Failed to load cheapest hours")
+        setError(t("common.error"))
         console.error(err)
       } finally {
         setLoading(false)
@@ -39,7 +41,7 @@ export function BestHours({ refreshTrigger, compact = false }: BestHoursProps) {
     }
 
     fetchCheapestHours()
-  }, [refreshTrigger])
+  }, [refreshTrigger, t])
 
   const formatHourTime = (timestamp: string) => {
     const date = new Date(timestamp)
@@ -56,9 +58,9 @@ export function BestHours({ refreshTrigger, compact = false }: BestHoursProps) {
     tomorrow.setDate(tomorrow.getDate() + 1)
 
     if (date.toDateString() === today.toDateString()) {
-      return "Today"
+      return t("common.today")
     } else if (date.toDateString() === tomorrow.toDateString()) {
-      return "Tomorrow"
+      return t("common.tomorrow")
     }
     return date.toLocaleDateString("fi-FI", { weekday: "short", day: "numeric" })
   }
@@ -85,7 +87,7 @@ export function BestHours({ refreshTrigger, compact = false }: BestHoursProps) {
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2">
             <Zap className="h-4 w-4 text-yellow-500" />
-            <CardTitle className="text-base font-medium">Best Hours</CardTitle>
+            <CardTitle className="text-base font-medium">{t("bestHours.title")}</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="pt-0">
@@ -99,7 +101,7 @@ export function BestHours({ refreshTrigger, compact = false }: BestHoursProps) {
             <div className="text-center text-muted-foreground py-2 text-sm">{error}</div>
           ) : cheapestHours.length === 0 ? (
             <div className="text-center text-muted-foreground py-2 text-sm">
-              No data
+              {t("history.noData")}
             </div>
           ) : (
             <div className="grid grid-cols-5 gap-2">
@@ -148,7 +150,7 @@ export function BestHours({ refreshTrigger, compact = false }: BestHoursProps) {
         <div className="flex items-center gap-2">
           <Zap className="h-5 w-5 text-yellow-500" />
           <CardTitle className="text-lg font-medium">
-            Best Hours to Use Electricity
+            {t("bestHours.titleFull")}
           </CardTitle>
         </div>
       </CardHeader>
@@ -170,7 +172,7 @@ export function BestHours({ refreshTrigger, compact = false }: BestHoursProps) {
           <div className="text-center text-muted-foreground py-4">{error}</div>
         ) : cheapestHours.length === 0 ? (
           <div className="text-center text-muted-foreground py-4">
-            No price data available
+            {t("history.noData")}
           </div>
         ) : (
           <div className="space-y-2">
@@ -203,7 +205,7 @@ export function BestHours({ refreshTrigger, compact = false }: BestHoursProps) {
                       {formatHourTime(hour.aikaleima_suomi)}
                       {current && (
                         <Badge variant="success" className="ml-2">
-                          Now
+                          {t("common.now")}
                         </Badge>
                       )}
                     </div>
@@ -213,11 +215,11 @@ export function BestHours({ refreshTrigger, compact = false }: BestHoursProps) {
                   </div>
                   <div className="text-right">
                     <div className="font-semibold text-green-600">
-                      {formatPrice(hour.hinta)} c/kWh
+                      {formatPrice(hour.hinta)} {t("price.centsPerKwh")}
                     </div>
                     {index === 0 && (
                       <div className="text-xs text-muted-foreground">
-                        Cheapest
+                        {t("bestHours.cheapest")}
                       </div>
                     )}
                   </div>
@@ -228,8 +230,7 @@ export function BestHours({ refreshTrigger, compact = false }: BestHoursProps) {
         )}
         <div className="mt-4 p-3 bg-muted rounded-lg">
           <p className="text-sm text-muted-foreground">
-            <strong>Tip:</strong> Schedule high-consumption activities like
-            laundry, dishwasher, or EV charging during these hours to save money.
+            {t("bestHours.tip")}
           </p>
         </div>
       </CardContent>

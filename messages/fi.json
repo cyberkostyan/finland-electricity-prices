@@ -1,0 +1,70 @@
+{
+  "common": {
+    "appName": "Suomen sähköhinnat",
+    "appNameShort": "Sähkö",
+    "tagline": "Reaaliaikaiset spot-hinnat ALV:lla",
+    "loading": "Ladataan...",
+    "error": "Virhe",
+    "retry": "Yritä uudelleen",
+    "refresh": "Päivitä",
+    "settings": "Asetukset",
+    "history": "Historia",
+    "today": "Tänään",
+    "tomorrow": "Huomenna",
+    "now": "Nyt",
+    "updated": "Päivitetty"
+  },
+  "price": {
+    "currentPrice": "Nykyinen hinta",
+    "priceHistory": "Hintahistoria",
+    "cheap": "Halpa",
+    "normal": "Normaali",
+    "expensive": "Kallis",
+    "vsLastHour": "vs edellinen tunti",
+    "centsPerKwh": "c/kWh",
+    "min": "Min",
+    "max": "Max",
+    "average": "Keskiarvo",
+    "avg": "Ka"
+  },
+  "chart": {
+    "24h": "24h",
+    "7days": "7 päivää",
+    "30days": "30 päivää",
+    "officialPrice": "Virallinen hinta",
+    "mlPrediction": "ML-ennuste",
+    "prediction": "ennuste"
+  },
+  "bestHours": {
+    "title": "Parhaat tunnit",
+    "titleFull": "Parhaat tunnit sähkönkäyttöön",
+    "cheapest": "Halvin",
+    "tip": "Ajoita suurikulutuksiset toiminnot kuten pyykinpesu, astianpesukone tai sähköauton lataus näille tunneille säästääksesi rahaa."
+  },
+  "alerts": {
+    "title": "Hintahälytykset",
+    "enableNotifications": "Ota ilmoitukset käyttöön",
+    "enableDescription": "Saa ilmoitus kun hinnat ovat alhaisia tai korkeita",
+    "lowPriceAlert": "Alhaisen hinnan hälytys",
+    "highPriceAlert": "Korkean hinnan hälytys",
+    "lowPriceDescription": "Ilmoita kun hinta laskee tämän tason alle",
+    "highPriceDescription": "Varoita kun hinta ylittää tämän tason",
+    "sendTestNotification": "Lähetä testiilmoitus",
+    "notificationsBlocked": "Ilmoitukset on estetty. Ota ne käyttöön selaimen asetuksista.",
+    "notificationsRequirePermission": "Ilmoitukset vaativat selaimen luvan."
+  },
+  "settings": {
+    "title": "Asetukset",
+    "description": "Määritä hälytykset ja asetukset"
+  },
+  "history": {
+    "title": "Hintahistoria",
+    "description": "Kuukausittaiset sähkönhintatilastot",
+    "noData": "Historiallista dataa ei saatavilla"
+  },
+  "footer": {
+    "data": "Data",
+    "predictions": "Ennusteet",
+    "vatNote": "Hinnat sisältävät 25,5% ALV. Ajat Suomen aikaa (EET/EEST)."
+  }
+}
