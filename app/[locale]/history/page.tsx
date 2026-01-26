@@ -103,8 +103,8 @@ export default function HistoryPage() {
         const now = new Date()
         const monthsData: MonthData[] = []
 
-        // Fetch data for each month (we'll do 6 months to avoid too many requests)
-        for (let i = 0; i < 6; i++) {
+        // Fetch data for each month
+        for (let i = 0; i < 12; i++) {
           const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1)
           const startOfMonth = new Date(
             monthDate.getFullYear(),
