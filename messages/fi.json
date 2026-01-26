@@ -112,7 +112,7 @@
         "intro": "Keräämme vain palvelun toiminnan kannalta välttämättömät tiedot:",
         "necessary": {
           "title": "Välttämättömät tiedot (tallennetaan paikallisesti selaimeen)",
-          "language": "Kieliasetus (NEXT_LOCALE-eväste)",
+          "language": "Kieliasetus",
           "theme": "Teema-asetus (vaalea/tumma tila)",
           "alerts": "Hintahälytysten asetukset (ilmoitusrajat)"
         },

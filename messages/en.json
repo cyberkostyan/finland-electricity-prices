@@ -112,7 +112,7 @@
         "intro": "We collect minimal data necessary to provide our service:",
         "necessary": {
           "title": "Necessary Data (stored locally in your browser)",
-          "language": "Language preference (NEXT_LOCALE cookie)",
+          "language": "Language preference",
           "theme": "Theme preference (light/dark mode)",
           "alerts": "Price alert settings (notification thresholds)"
         },
