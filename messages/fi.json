@@ -56,7 +56,34 @@
   },
   "settings": {
     "title": "Asetukset",
-    "description": "Määritä hälytykset ja asetukset"
+    "description": "Määritä hälytykset ja asetukset",
+    "privacy": {
+      "title": "Yksityisyys ja tiedot",
+      "description": "Hallitse yksityisyysasetuksiasi ja tietojasi",
+      "analytics": {
+        "title": "Anonyymi analytiikka",
+        "label": "Ota anonyymi analytiikka käyttöön",
+        "description": "Auta parantamaan Spothintaa jakamalla anonyymiä käyttötietoa (sivunäkymät, suorituskykymittarit)",
+        "enabled": "Analytiikka käytössä - kiitos avustasi sovelluksen parantamisessa!",
+        "disabled": "Analytiikka pois päältä - käyttötietoja ei kerätä"
+      },
+      "data": {
+        "title": "Sinun tietosi",
+        "stored": "Selaimeen tallennetut tiedot:",
+        "priceAlerts": "Hintahälytysten asetukset",
+        "language": "Kieliasetus",
+        "theme": "Teema-asetus (vaalea/tumma)",
+        "analyticsData": "Anonyymi analytiikka (jos käytössä)",
+        "clearAll": "Tyhjennä kaikki paikalliset tiedot",
+        "clearConfirm": "Vahvista tyhjennys?",
+        "export": "Vie tietoni"
+      },
+      "policy": {
+        "title": "Tietosuojakäytäntö",
+        "summary": "Lue miten käsittelemme tietojasi ja mitkä ovat yksityisyysoikeutesi.",
+        "link": "Lue koko tietosuojakäytäntö"
+      }
+    }
   },
   "history": {
     "title": "Hintahistoria",
@@ -68,5 +95,76 @@
     "predictions": "Ennusteet",
     "vatNote": "Hinnat sisältävät 25,5% ALV. Ajat Suomen aikaa (EET/EEST).",
     "supportProject": "Tue projektia"
+  },
+  "privacy": {
+    "title": "Tietosuojakäytäntö",
+    "lastUpdated": "Viimeksi päivitetty",
+    "updateDate": "Tammikuu 2025",
+    "backToSettings": "Takaisin asetuksiin",
+    "sections": {
+      "whoWeAre": {
+        "title": "1. Keitä olemme",
+        "content": "Spothinta on ilmainen verkkosovellus, joka näyttää reaaliaikaiset sähkön spot-hinnat Suomessa. Olemme sitoutuneet suojaamaan yksityisyyttäsi ja olemaan läpinäkyviä tietojen käsittelyssä."
+      },
+      "dataWeCollect": {
+        "title": "2. Keräämämme tiedot",
+        "intro": "Keräämme vain palvelun toiminnan kannalta välttämättömät tiedot:",
+        "necessary": {
+          "title": "Välttämättömät tiedot (tallennetaan paikallisesti selaimeen)",
+          "language": "Kieliasetus (NEXT_LOCALE-eväste)",
+          "theme": "Teema-asetus (vaalea/tumma tila)",
+          "alerts": "Hintahälytysten asetukset (ilmoitusrajat)"
+        },
+        "optional": {
+          "title": "Valinnainen analytiikka (vain jos otat käyttöön)",
+          "intro": "Kun otat analytiikan käyttöön Asetuksissa, keräämme:",
+          "pageViews": "Anonyymiä sivuliikennettä (mitä sivuja käyt)",
+          "performance": "Suorituskykymittareita (sivujen latausajat)",
+          "device": "Perustietoja laitteesta (selaintyyppi, näytön koko)"
+        }
+      },
+      "legalBasis": {
+        "title": "3. Käsittelyn oikeusperuste",
+        "necessary": {
+          "title": "Välttämättömät evästeet",
+          "content": "Oikeutettu etu - vaaditaan sovelluksen toimintaan"
+        },
+        "analytics": {
+          "title": "Analytiikka",
+          "content": "Suostumus - kerätään vain jos otat ne nimenomaisesti käyttöön Asetuksissa"
+        }
+      },
+      "thirdParties": {
+        "title": "4. Kolmannen osapuolen palvelut",
+        "intro": "Käytämme seuraavia kolmannen osapuolen palveluita:",
+        "vercel": "Palvelinpalvelu ja analytiikka (jos käytössä). Vercel voi käsitellä tietoja USA:ssa asianmukaisten suojatoimien alaisena.",
+        "sahkotin": "Sähkön hintadata-API. Henkilötietoja ei lähetetä tälle palvelulle.",
+        "openMeteo": "Säätietojen API. Henkilötietoja ei lähetetä tälle palvelulle."
+      },
+      "dataRetention": {
+        "title": "5. Tietojen säilytys",
+        "cookies": "Evästeet: enintään 1 vuosi",
+        "localStorage": "Paikallinen tallennus: kunnes tyhjennät selaimen tiedot tai käytät 'Tyhjennä kaikki tiedot' Asetuksissa",
+        "analytics": "Analytiikkatiedot (jos käytössä): Vercel säilyttää tietosuojakäytäntönsä mukaisesti"
+      },
+      "yourRights": {
+        "title": "6. Oikeutesi",
+        "intro": "GDPR:n mukaan sinulla on seuraavat oikeudet:",
+        "access": "Oikeus päästä käsiksi tietoihisi",
+        "rectification": "Oikeus oikaisuun (virheellisten tietojen korjaaminen)",
+        "erasure": "Oikeus poistoon (tietojesi poistaminen)",
+        "portability": "Oikeus tietojen siirrettävyyteen (tietojen vienti)",
+        "withdraw": "Oikeus peruuttaa suostumus analytiikkaan milloin tahansa",
+        "howTo": "Voit käyttää näitä oikeuksia Asetukset-sivulla: vie tietosi, tyhjennä kaikki paikalliset tiedot tai poista analytiikka käytöstä. Lisäpyyntöjä varten ota meihin yhteyttä."
+      },
+      "contact": {
+        "title": "7. Ota yhteyttä",
+        "content": "Yksityisyyteen liittyvissä kysymyksissä tai oikeuksiesi käyttämiseksi ota yhteyttä:"
+      },
+      "updates": {
+        "title": "8. Käytännön päivitykset",
+        "content": "Saatamme päivittää tätä tietosuojakäytäntöä ajoittain. Muutokset julkaistaan tällä sivulla päivitetyllä päivämäärällä. Suosittelemme tarkistamaan tämän käytännön säännöllisesti."
+      }
+    }
   }
 }

@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl"
 import { Link } from "@/i18n/navigation"
 import { PriceAlerts } from "@/components/PriceAlerts"
+import { PrivacySettings } from "@/components/PrivacySettings"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { LanguageSwitcher } from "@/components/LanguageSwitcher"
@@ -40,6 +41,9 @@ export default function SettingsPage() {
 
         {/* Price Alerts */}
         <PriceAlerts />
+
+        {/* Privacy & Data */}
+        <PrivacySettings />
 
         {/* Footer */}
         <footer className="mt-12 pt-6 border-t text-center text-sm text-muted-foreground">

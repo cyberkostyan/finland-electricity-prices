@@ -56,7 +56,34 @@
   },
   "settings": {
     "title": "Settings",
-    "description": "Configure alerts and preferences"
+    "description": "Configure alerts and preferences",
+    "privacy": {
+      "title": "Privacy & Data",
+      "description": "Manage your privacy settings and data",
+      "analytics": {
+        "title": "Anonymous Analytics",
+        "label": "Enable anonymous analytics",
+        "description": "Help improve Spothinta by sharing anonymous usage data (page views, performance metrics)",
+        "enabled": "Analytics enabled - thank you for helping improve the app!",
+        "disabled": "Analytics disabled - no usage data is collected"
+      },
+      "data": {
+        "title": "Your Data",
+        "stored": "Data stored in your browser:",
+        "priceAlerts": "Price alert settings",
+        "language": "Language preference",
+        "theme": "Theme preference (light/dark)",
+        "analyticsData": "Anonymous analytics (if enabled)",
+        "clearAll": "Clear all local data",
+        "clearConfirm": "Confirm clear?",
+        "export": "Export my data"
+      },
+      "policy": {
+        "title": "Privacy Policy",
+        "summary": "Learn about how we handle your data and your privacy rights.",
+        "link": "Read full privacy policy"
+      }
+    }
   },
   "history": {
     "title": "Price History",
@@ -68,5 +95,76 @@
     "predictions": "Predictions",
     "vatNote": "Prices include 25.5% VAT. All times in Finnish time (EET/EEST).",
     "supportProject": "Support the project"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated",
+    "updateDate": "January 2025",
+    "backToSettings": "Back to Settings",
+    "sections": {
+      "whoWeAre": {
+        "title": "1. Who We Are",
+        "content": "Spothinta is a free web application that displays real-time electricity spot prices in Finland. We are committed to protecting your privacy and being transparent about how we handle data."
+      },
+      "dataWeCollect": {
+        "title": "2. Data We Collect",
+        "intro": "We collect minimal data necessary to provide our service:",
+        "necessary": {
+          "title": "Necessary Data (stored locally in your browser)",
+          "language": "Language preference (NEXT_LOCALE cookie)",
+          "theme": "Theme preference (light/dark mode)",
+          "alerts": "Price alert settings (notification thresholds)"
+        },
+        "optional": {
+          "title": "Optional Analytics (only if you enable them)",
+          "intro": "When you opt-in to analytics in Settings, we collect:",
+          "pageViews": "Anonymous page views (which pages you visit)",
+          "performance": "Performance metrics (page load times)",
+          "device": "Basic device info (browser type, screen size)"
+        }
+      },
+      "legalBasis": {
+        "title": "3. Legal Basis for Processing",
+        "necessary": {
+          "title": "Necessary cookies",
+          "content": "Legitimate interest - required for the app to function properly"
+        },
+        "analytics": {
+          "title": "Analytics",
+          "content": "Consent - only collected if you explicitly enable them in Settings"
+        }
+      },
+      "thirdParties": {
+        "title": "4. Third-Party Services",
+        "intro": "We use the following third-party services:",
+        "vercel": "Hosting and analytics (if enabled). Vercel may process data in the US under appropriate safeguards.",
+        "sahkotin": "Electricity price data API. No personal data is sent to this service.",
+        "openMeteo": "Weather data API. No personal data is sent to this service."
+      },
+      "dataRetention": {
+        "title": "5. Data Retention",
+        "cookies": "Cookies: 1 year maximum",
+        "localStorage": "Local storage: Until you clear browser data or use 'Clear all local data' in Settings",
+        "analytics": "Analytics data (if enabled): Retained by Vercel according to their privacy policy"
+      },
+      "yourRights": {
+        "title": "6. Your Rights",
+        "intro": "Under GDPR, you have the following rights:",
+        "access": "Right to access your data",
+        "rectification": "Right to rectification (correct inaccurate data)",
+        "erasure": "Right to erasure (delete your data)",
+        "portability": "Right to data portability (export your data)",
+        "withdraw": "Right to withdraw consent for analytics at any time",
+        "howTo": "You can exercise these rights through the Settings page: export your data, clear all local data, or disable analytics. For additional requests, contact us."
+      },
+      "contact": {
+        "title": "7. Contact Us",
+        "content": "For privacy-related questions or to exercise your rights, contact us at:"
+      },
+      "updates": {
+        "title": "8. Policy Updates",
+        "content": "We may update this privacy policy from time to time. Any changes will be posted on this page with an updated revision date. We encourage you to review this policy periodically."
+      }
+    }
   }
 }

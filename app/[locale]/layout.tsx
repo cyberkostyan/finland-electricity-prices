@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-import { Analytics } from "@vercel/analytics/next"
-import { SpeedInsights } from "@vercel/speed-insights/next"
 import { ThemeProvider } from "@/components/ThemeProvider"
+import { ConsentProvider } from "@/components/consent/ConsentProvider"
+import { AnalyticsWrapper } from "@/components/AnalyticsWrapper"
 import { NextIntlClientProvider } from "next-intl"
 import { getMessages, getTranslations } from "next-intl/server"
 import { notFound } from "next/navigation"
@@ -182,11 +182,12 @@ export default async function LocaleLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <ConsentProvider>
+              {children}
+              <AnalyticsWrapper />
+            </ConsentProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
-        <Analytics />
-        <SpeedInsights />
       </body>
     </html>
   )
