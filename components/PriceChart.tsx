@@ -13,12 +13,13 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from "recharts"
-import { PriceData, calculateStats } from "@/lib/api"
+import { PriceData, TemperatureData, calculateStats } from "@/lib/api"
 import { formatPrice } from "@/lib/utils"
 
 interface PriceChartProps {
   prices: PriceData[]
   predictions?: PriceData[]
+  temperatures?: TemperatureData[]
   view: "24h" | "7d" | "30d"
   onViewChange: (view: "24h" | "7d" | "30d") => void
   loading?: boolean
@@ -30,6 +31,7 @@ interface ChartDataPoint {
   fullTime: string
   price?: number
   prediction?: number
+  temperature?: number
   date: Date
   isCurrent?: boolean
   isPrediction?: boolean
@@ -38,6 +40,7 @@ interface ChartDataPoint {
 export function PriceChart({
   prices,
   predictions = [],
+  temperatures = [],
   view,
   onViewChange,
   loading,
@@ -74,6 +77,19 @@ export function PriceChart({
     })
     .slice(0, getPredictionLimit())
 
+  // Create temperature lookup map by hour
+  const tempMap = new Map<string, number>()
+  temperatures.forEach(t => {
+    const date = new Date(t.date)
+    const key = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}-${date.getHours()}`
+    tempMap.set(key, t.temperature)
+  })
+
+  const getTemperature = (date: Date): number | undefined => {
+    const key = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}-${date.getHours()}`
+    return tempMap.get(key)
+  }
+
   const formatTime = (date: Date): string => {
     if (view === "24h") {
       return date.toLocaleTimeString("fi-FI", {
@@ -103,6 +119,7 @@ export function PriceChart({
       timeKey: `price-${index}`,
       fullTime: date.toLocaleString("fi-FI"),
       price: p.value,
+      temperature: getTemperature(date),
       date,
       isCurrent,
       isPrediction: false,
@@ -118,6 +135,7 @@ export function PriceChart({
       timeKey: `pred-${index}`,
       fullTime: date.toLocaleString("fi-FI"),
       prediction: p.value,
+      temperature: getTemperature(date),
       date,
       isCurrent: false,
       isPrediction: true,
@@ -132,6 +150,9 @@ export function PriceChart({
 
   // Combine data
   const chartData: ChartDataPoint[] = [...priceData, ...predictionData]
+
+  // Check if we have temperature data
+  const hasTemperature = chartData.some(d => d.temperature !== undefined)
 
   const getPriceColor = (price: number) => {
     if (price < 5) return "hsl(142, 76%, 36%)"
@@ -153,6 +174,11 @@ export function PriceChart({
           <p className="text-lg font-bold" style={{ color: isPred ? "#06b6d4" : getPriceColor(value) }}>
             {formatPrice(value)} <span className="text-xs font-normal text-muted-foreground">{t("price.centsPerKwh")}</span>
           </p>
+          {data.temperature !== undefined && (
+            <p className="text-sm text-orange-500 mt-1">
+              {data.temperature.toFixed(1)}°C
+            </p>
+          )}
         </div>
       )
     }
@@ -195,7 +221,7 @@ export function PriceChart({
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart
                   data={chartData}
-                  margin={{ top: 20, right: 20, left: 0, bottom: 0 }}
+                  margin={{ top: 20, right: hasTemperature ? 45 : 20, left: 0, bottom: 0 }}
                 >
                   <defs>
                     <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
@@ -213,6 +239,7 @@ export function PriceChart({
                     dy={10}
                   />
                   <YAxis
+                    yAxisId="price"
                     tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
                     tickLine={false}
                     axisLine={false}
@@ -220,11 +247,24 @@ export function PriceChart({
                     domain={["dataMin - 2", "dataMax + 2"]}
                     width={45}
                   />
+                  {hasTemperature && (
+                    <YAxis
+                      yAxisId="temp"
+                      orientation="right"
+                      tick={{ fontSize: 11, fill: "#f97316" }}
+                      tickLine={false}
+                      axisLine={false}
+                      tickFormatter={(value) => `${value}°`}
+                      domain={["dataMin - 5", "dataMax + 5"]}
+                      width={40}
+                    />
+                  )}
                   <Tooltip
                     content={<CustomTooltip />}
                     cursor={{ stroke: "hsl(var(--muted-foreground))", strokeWidth: 1, strokeDasharray: "4 4" }}
                   />
                   <ReferenceLine
+                    yAxisId="price"
                     y={stats.avg}
                     stroke="hsl(var(--muted-foreground))"
                     strokeDasharray="4 4"
@@ -236,8 +276,23 @@ export function PriceChart({
                       fontSize: 10,
                     }}
                   />
+                  {/* Temperature line */}
+                  {hasTemperature && (
+                    <Line
+                      yAxisId="temp"
+                      type="monotone"
+                      dataKey="temperature"
+                      stroke="#f97316"
+                      strokeWidth={1.5}
+                      strokeOpacity={0.7}
+                      isAnimationActive={false}
+                      connectNulls={true}
+                      dot={false}
+                    />
+                  )}
                   {/* Official prices - solid area */}
                   <Area
+                    yAxisId="price"
                     type="natural"
                     dataKey="price"
                     stroke="hsl(var(--primary))"
@@ -292,6 +347,7 @@ export function PriceChart({
                   {/* Predictions - dashed line */}
                   {futurePredictions.length > 0 && (
                     <Line
+                      yAxisId="price"
                       type="natural"
                       dataKey="prediction"
                       stroke="#06b6d4"
@@ -311,19 +367,25 @@ export function PriceChart({
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
-            {/* Legend for predictions */}
-            {futurePredictions.length > 0 && (
-              <div className="flex items-center justify-center gap-6 px-4 py-2 text-xs text-muted-foreground border-t">
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-0.5 bg-primary" />
-                  <span>{t("chart.officialPrice")}</span>
-                </div>
+            {/* Legend */}
+            <div className="flex items-center justify-center gap-4 sm:gap-6 px-4 py-2 text-xs text-muted-foreground border-t flex-wrap">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-0.5 bg-primary" />
+                <span>{t("chart.officialPrice")}</span>
+              </div>
+              {futurePredictions.length > 0 && (
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-0.5 border-t-2 border-dashed border-cyan-500" />
                   <span>{t("chart.mlPrediction")}</span>
                 </div>
-              </div>
-            )}
+              )}
+              {hasTemperature && (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-0.5 bg-orange-500" />
+                  <span>{t("chart.temperature")}</span>
+                </div>
+              )}
+            </div>
             <div className="grid grid-cols-3 gap-4 p-4 border-t bg-muted/30">
               <div className="text-center">
                 <div className="text-xs text-muted-foreground uppercase tracking-wide">{t("price.min")}</div>

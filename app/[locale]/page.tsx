@@ -8,9 +8,11 @@ import { BestHours } from "@/components/BestHours"
 import {
   fetchPrices,
   fetchPredictions,
+  fetchWeather,
   getCurrentPrice,
   getPreviousPrice,
   type PriceData,
+  type TemperatureData,
 } from "@/lib/api"
 import { Link } from "@/i18n/navigation"
 import { Zap, RefreshCw, History, Settings } from "lucide-react"
@@ -22,6 +24,7 @@ export default function Home() {
   const t = useTranslations()
   const [prices, setPrices] = useState<PriceData[]>([])
   const [predictions, setPredictions] = useState<PriceData[]>([])
+  const [temperatures, setTemperatures] = useState<TemperatureData[]>([])
   const [view, setView] = useState<"24h" | "7d" | "30d">("24h")
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -59,14 +62,16 @@ export default function Home() {
 
         const { start, end } = getDateRange(view)
 
-        // Fetch prices and predictions in parallel
-        const [pricesData, predictionsData] = await Promise.all([
+        // Fetch prices, predictions and weather in parallel
+        const [pricesData, predictionsData, weatherData] = await Promise.all([
           fetchPrices(start, end),
           fetchPredictions().catch(() => []), // Don't fail if predictions unavailable
+          fetchWeather(view).catch(() => []), // Don't fail if weather unavailable
         ])
 
         setPrices(pricesData)
         setPredictions(predictionsData)
+        setTemperatures(weatherData)
         setLastUpdate(new Date())
         setRefreshTrigger((t) => t + 1)
       } catch (error) {
@@ -161,6 +166,7 @@ export default function Home() {
         <PriceChart
           prices={prices}
           predictions={predictions}
+          temperatures={temperatures}
           view={view}
           onViewChange={setView}
           loading={loading}

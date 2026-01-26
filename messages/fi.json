@@ -33,7 +33,8 @@
     "30days": "30 päivää",
     "officialPrice": "Virallinen hinta",
     "mlPrediction": "ML-ennuste",
-    "prediction": "ennuste"
+    "prediction": "ennuste",
+    "temperature": "Lämpötila (Helsinki)"
   },
   "bestHours": {
     "title": "Parhaat tunnit",

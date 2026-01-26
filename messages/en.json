@@ -33,7 +33,8 @@
     "30days": "30 Days",
     "officialPrice": "Official price",
     "mlPrediction": "ML Prediction",
-    "prediction": "prediction"
+    "prediction": "prediction",
+    "temperature": "Temperature (Helsinki)"
   },
   "bestHours": {
     "title": "Best Hours",

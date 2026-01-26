@@ -9,6 +9,11 @@ export interface CheapHour {
   hinta: number
 }
 
+export interface TemperatureData {
+  date: string
+  temperature: number
+}
+
 export async function fetchPrices(start: Date, end: Date): Promise<PriceData[]> {
   const startStr = start.toISOString()
   const endStr = end.toISOString()
@@ -46,6 +51,37 @@ export async function fetchCheapestHours(hours: number = 3, deadline?: Date): Pr
 
   if (!response.ok) {
     throw new Error("Failed to fetch cheapest hours")
+  }
+
+  return response.json()
+}
+
+export async function fetchWeather(view: "24h" | "7d" | "30d"): Promise<TemperatureData[]> {
+  // Adjust past_days and forecast_days based on view
+  let pastDays: number
+  let forecastDays: number
+
+  switch (view) {
+    case "24h":
+      pastDays = 1
+      forecastDays = 2
+      break
+    case "7d":
+      pastDays = 7
+      forecastDays = 7
+      break
+    case "30d":
+      pastDays = 30
+      forecastDays = 7
+      break
+  }
+
+  const response = await fetch(
+    `/api/weather?past_days=${pastDays}&forecast_days=${forecastDays}`
+  )
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch weather data")
   }
 
   return response.json()
