@@ -9,10 +9,12 @@ import {
   fetchPrices,
   fetchPredictions,
   fetchWeather,
+  fetchHistoricalPredictions,
   getCurrentPrice,
   getPreviousPrice,
   type PriceData,
   type TemperatureData,
+  type HistoricalPrediction,
 } from "@/lib/api"
 import { Link } from "@/i18n/navigation"
 import { Zap, RefreshCw, History, Settings } from "lucide-react"
@@ -24,6 +26,7 @@ export default function Home() {
   const t = useTranslations()
   const [prices, setPrices] = useState<PriceData[]>([])
   const [predictions, setPredictions] = useState<PriceData[]>([])
+  const [historicalPredictions, setHistoricalPredictions] = useState<HistoricalPrediction[]>([])
   const [temperatures, setTemperatures] = useState<TemperatureData[]>([])
   const [view, setView] = useState<"24h" | "7d" | "30d">("24h")
   const [loading, setLoading] = useState(true)
@@ -62,15 +65,17 @@ export default function Home() {
 
         const { start, end } = getDateRange(view)
 
-        // Fetch prices, predictions and weather in parallel
-        const [pricesData, predictionsData, weatherData] = await Promise.all([
+        // Fetch prices, predictions, historical predictions and weather in parallel
+        const [pricesData, predictionsData, historicalPredData, weatherData] = await Promise.all([
           fetchPrices(start, end),
           fetchPredictions().catch(() => []), // Don't fail if predictions unavailable
+          fetchHistoricalPredictions(start, new Date()).catch(() => []), // Don't fail if historical predictions unavailable
           fetchWeather(view).catch(() => []), // Don't fail if weather unavailable
         ])
 
         setPrices(pricesData)
         setPredictions(predictionsData)
+        setHistoricalPredictions(historicalPredData)
         setTemperatures(weatherData)
         setLastUpdate(new Date())
         setRefreshTrigger((t) => t + 1)
@@ -166,6 +171,7 @@ export default function Home() {
         <PriceChart
           prices={prices}
           predictions={predictions}
+          historicalPredictions={historicalPredictions}
           temperatures={temperatures}
           view={view}
           onViewChange={setView}

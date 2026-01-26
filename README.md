@@ -23,6 +23,7 @@ Real-time electricity spot prices for Finland with ML predictions.
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/)
 - **UI Components:** [shadcn/ui](https://ui.shadcn.com/) + [Radix UI](https://www.radix-ui.com/)
 - **Charts:** [Recharts](https://recharts.org/)
+- **Database:** [Prisma](https://www.prisma.io/) + PostgreSQL (optional)
 - **i18n:** [next-intl](https://next-intl.dev/)
 - **Deployment:** [Vercel](https://vercel.com/)
 
@@ -65,6 +66,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 | `yarn build` | Build for production |
 | `yarn start` | Start production server |
 | `yarn lint` | Run ESLint |
+| `yarn prisma migrate dev` | Run database migrations |
+| `yarn prisma studio` | Open Prisma Studio |
 
 ## Project Structure
 
@@ -100,6 +103,20 @@ No environment variables required for basic setup. The app uses public APIs.
 
 Optional for production:
 - Vercel Analytics is configured but requires user opt-in
+- `POSTGRES_PRISMA_URL` - PostgreSQL connection URL (pooled) for historical predictions
+- `POSTGRES_URL_NON_POOLING` - PostgreSQL direct connection URL for migrations
+
+## Database (Optional)
+
+The app can store ML prediction history for comparison with actual prices:
+
+```bash
+# Run migrations
+yarn prisma migrate dev
+
+# Open Prisma Studio to view data
+yarn prisma studio
+```
 
 ## Deployment
 
@@ -107,7 +124,7 @@ The app is optimized for Vercel deployment:
 
 ```bash
 # Install Vercel CLI
-npm i -g vercel
+yarn global add vercel
 
 # Deploy
 vercel

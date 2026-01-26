@@ -14,12 +14,13 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from "recharts"
-import { PriceData, TemperatureData, calculateStats } from "@/lib/api"
+import { PriceData, TemperatureData, HistoricalPrediction, calculateStats } from "@/lib/api"
 import { formatPrice } from "@/lib/utils"
 
 interface PriceChartProps {
   prices: PriceData[]
   predictions?: PriceData[]
+  historicalPredictions?: HistoricalPrediction[]
   temperatures?: TemperatureData[]
   view: "24h" | "7d" | "30d"
   onViewChange: (view: "24h" | "7d" | "30d") => void
@@ -32,6 +33,7 @@ interface ChartDataPoint {
   fullTime: string
   price?: number
   prediction?: number
+  histPrediction?: number
   temperature?: number
   date: Date
   isCurrent?: boolean
@@ -40,10 +42,13 @@ interface ChartDataPoint {
 
 // Purple color for temperature (distinct from orange "Now" marker)
 const TEMP_COLOR = "#8b5cf6"
+// Orange color for historical predictions
+const HIST_PRED_COLOR = "#f59e0b"
 
 export function PriceChart({
   prices,
   predictions = [],
+  historicalPredictions = [],
   temperatures = [],
   view,
   onViewChange,
@@ -51,6 +56,7 @@ export function PriceChart({
 }: PriceChartProps) {
   const t = useTranslations()
   const [showTemperature, setShowTemperature] = useState(true)
+  const [showHistoricalPrediction, setShowHistoricalPrediction] = useState(true)
   const stats = calculateStats(prices)
 
   const now = new Date()
@@ -95,6 +101,19 @@ export function PriceChart({
     return tempMap.get(key)
   }
 
+  // Create historical prediction lookup map by hour
+  const histPredMap = new Map<string, number>()
+  historicalPredictions.forEach(p => {
+    const date = new Date(p.date)
+    const key = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}-${date.getHours()}`
+    histPredMap.set(key, p.value)
+  })
+
+  const getHistoricalPrediction = (date: Date): number | undefined => {
+    const key = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}-${date.getHours()}`
+    return histPredMap.get(key)
+  }
+
   const formatTime = (date: Date): string => {
     if (view === "24h") {
       return date.toLocaleTimeString("fi-FI", {
@@ -124,6 +143,7 @@ export function PriceChart({
       timeKey: `price-${index}`,
       fullTime: date.toLocaleString("fi-FI"),
       price: p.value,
+      histPrediction: showHistoricalPrediction ? getHistoricalPrediction(date) : undefined,
       temperature: getTemperature(date),
       date,
       isCurrent,
@@ -160,6 +180,10 @@ export function PriceChart({
   const hasTemperature = chartData.some(d => d.temperature !== undefined)
   const displayTemperature = hasTemperature && showTemperature
 
+  // Check if we have historical prediction data
+  const hasHistoricalPrediction = historicalPredictions.length > 0
+  const displayHistoricalPrediction = hasHistoricalPrediction && showHistoricalPrediction
+
   const getPriceColor = (price: number) => {
     if (price < 5) return "hsl(142, 76%, 36%)"
     if (price < 10) return "hsl(48, 96%, 53%)"
@@ -180,6 +204,11 @@ export function PriceChart({
           <p className="text-lg font-bold" style={{ color: isPred ? "#06b6d4" : getPriceColor(value) }}>
             {formatPrice(value)} <span className="text-xs font-normal text-muted-foreground">{t("price.centsPerKwh")}</span>
           </p>
+          {data.histPrediction !== undefined && showHistoricalPrediction && (
+            <p className="text-sm mt-1" style={{ color: HIST_PRED_COLOR }}>
+              {t("chart.historicalPrediction")}: {formatPrice(data.histPrediction)} {t("price.centsPerKwh")}
+            </p>
+          )}
           {data.temperature !== undefined && showTemperature && (
             <p className="text-sm mt-1" style={{ color: TEMP_COLOR }}>
               {data.temperature.toFixed(1)}°C
@@ -370,6 +399,27 @@ export function PriceChart({
                       }}
                     />
                   )}
+                  {/* Historical predictions - dotted orange line */}
+                  {displayHistoricalPrediction && (
+                    <Line
+                      yAxisId="price"
+                      type="natural"
+                      dataKey="histPrediction"
+                      stroke={HIST_PRED_COLOR}
+                      strokeWidth={1.5}
+                      strokeDasharray="2 4"
+                      strokeOpacity={0.8}
+                      isAnimationActive={false}
+                      connectNulls={true}
+                      dot={false}
+                      activeDot={{
+                        r: 3,
+                        fill: HIST_PRED_COLOR,
+                        stroke: "#fff",
+                        strokeWidth: 2
+                      }}
+                    />
+                  )}
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
@@ -384,6 +434,22 @@ export function PriceChart({
                   <div className="w-4 h-0.5 border-t-2 border-dashed border-cyan-500" />
                   <span>{t("chart.mlPrediction")}</span>
                 </div>
+              )}
+              {hasHistoricalPrediction && (
+                <button
+                  onClick={() => setShowHistoricalPrediction(!showHistoricalPrediction)}
+                  className={`flex items-center gap-2 px-2 py-1 rounded transition-colors ${
+                    showHistoricalPrediction
+                      ? "bg-amber-100 dark:bg-amber-900/30"
+                      : "opacity-50 hover:opacity-75"
+                  }`}
+                >
+                  <div
+                    className="w-4 h-0.5 border-t border-dashed"
+                    style={{ borderColor: HIST_PRED_COLOR, opacity: showHistoricalPrediction ? 1 : 0.5 }}
+                  />
+                  <span>{t("chart.historicalPrediction")}</span>
+                </button>
               )}
               {hasTemperature && (
                 <button

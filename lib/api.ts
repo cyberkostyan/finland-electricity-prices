@@ -14,6 +14,12 @@ export interface TemperatureData {
   temperature: number
 }
 
+export interface HistoricalPrediction {
+  date: string
+  value: number
+  predictedAt: string
+}
+
 export async function fetchPrices(start: Date, end: Date): Promise<PriceData[]> {
   const startStr = start.toISOString()
   const endStr = end.toISOString()
@@ -85,6 +91,25 @@ export async function fetchWeather(view: "24h" | "7d" | "30d"): Promise<Temperat
   }
 
   return response.json()
+}
+
+export async function fetchHistoricalPredictions(
+  start: Date,
+  end: Date
+): Promise<HistoricalPrediction[]> {
+  const startStr = start.toISOString()
+  const endStr = end.toISOString()
+
+  const response = await fetch(
+    `/api/prices/prediction/history?start=${encodeURIComponent(startStr)}&end=${encodeURIComponent(endStr)}`
+  )
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch historical predictions")
+  }
+
+  const data = await response.json()
+  return data.historicalPredictions || []
 }
 
 export function getCurrentPrice(prices: PriceData[]): PriceData | null {
