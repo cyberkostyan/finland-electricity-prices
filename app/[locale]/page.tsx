@@ -178,7 +178,7 @@ export default function Home() {
             >
               sahkotin.fi
             </a>
-            {" • "}{t("footer.predictions")}: {" "}
+            {" • "}{t("footer.predictions")}:{" "}
             <a
               href="https://github.com/vividfog/nordpool-predict-fi"
               target="_blank"
@@ -189,6 +189,19 @@ export default function Home() {
             </a>
           </p>
           <p className="mt-2">{t("footer.vatNote")}</p>
+          <div className="mt-4">
+            <a
+              href="https://revolut.me/cyberkosta"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[#0075EB] hover:bg-[#0066CC] text-white rounded-full text-sm font-medium transition-colors"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.5 12c0-1.5-.4-2.8-1.1-4-.7-1.1-1.7-2-2.9-2.6V3.9c0-.5-.4-.9-.9-.9h-7c-.5 0-.9.4-.9.9v1.5C6.4 6 5.4 7 4.7 8c-.7 1.2-1.1 2.5-1.1 4s.4 2.8 1.1 4c.7 1.1 1.7 2 2.9 2.6v1.5c0 .5.4.9.9.9h7c.5 0 .9-.4.9-.9v-1.5c1.2-.6 2.2-1.5 2.9-2.6.7-1.2 1.2-2.5 1.2-4zM12 17c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5z"/>
+              </svg>
+              {t("footer.supportProject")}
+            </a>
+          </div>
         </footer>
       </div>
     </main>
