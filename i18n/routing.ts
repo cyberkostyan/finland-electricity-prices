@@ -10,6 +10,7 @@ export const routing = defineRouting({
   // Don't show locale prefix for default locale
   localePrefix: "as-needed",
 
-  // Detect locale from cookie
-  localeDetection: true,
+  // Disable auto-detection from Accept-Language header
+  // Users will always get Finnish by default, unless they have a cookie
+  localeDetection: false,
 })
