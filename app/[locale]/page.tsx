@@ -11,7 +11,6 @@ import {
   fetchWeather,
   fetchHistoricalPredictions,
   getCurrentPrice,
-  getPreviousPrice,
   type PriceData,
   type TemperatureData,
   type HistoricalPrediction,
@@ -103,23 +102,19 @@ export default function Home() {
   }, [loadPrices])
 
   const currentPrice = getCurrentPrice(prices)
-  const previousPrice = getPreviousPrice(prices)
 
   return (
     <main className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <div className="p-2 bg-primary rounded-lg">
               <Zap className="h-6 w-6 text-primary-foreground" />
             </div>
-            <div>
-              <h1 className="text-2xl font-bold">
-                <span className="sm:hidden">{t("common.appNameShort")}</span>
-                <span className="hidden sm:inline">{t("common.appName")}</span>
-              </h1>
-              <p className="text-muted-foreground text-sm hidden sm:block">
+            <div className="hidden sm:block">
+              <h1 className="text-2xl font-bold">{t("common.appName")}</h1>
+              <p className="text-muted-foreground text-sm">
                 {t("common.tagline")}
               </p>
             </div>
@@ -161,7 +156,8 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <PriceDisplay
             currentPrice={currentPrice}
-            previousPrice={previousPrice}
+            prices={prices}
+            historicalPredictions={historicalPredictions}
             loading={loading}
           />
           <BestHours refreshTrigger={refreshTrigger} compact />

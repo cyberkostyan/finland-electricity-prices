@@ -148,3 +148,46 @@ export function calculateStats(prices: PriceData[]): {
 
   return { min, max, avg }
 }
+
+export function getForecastForCurrentHour(
+  historicalPredictions: HistoricalPrediction[]
+): HistoricalPrediction | null {
+  const now = new Date()
+  const currentHour = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours())
+
+  return historicalPredictions.find(p => {
+    const predDate = new Date(p.date)
+    return predDate.getTime() === currentHour.getTime()
+  }) || null
+}
+
+export function calculateTrends(prices: PriceData[], currentPrice: number): {
+  h1: { diff: number; percent: number } | null
+  h12: { diff: number; percent: number } | null
+  h24: { diff: number; percent: number } | null
+} {
+  const now = new Date()
+
+  const getPriceAtHoursAgo = (hoursAgo: number): number | null => {
+    const targetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() - hoursAgo)
+    const found = prices.find(p => {
+      const priceDate = new Date(p.date)
+      return priceDate.getTime() === targetTime.getTime()
+    })
+    return found ? found.value : null
+  }
+
+  const calculateTrend = (hoursAgo: number): { diff: number; percent: number } | null => {
+    const pastPrice = getPriceAtHoursAgo(hoursAgo)
+    if (pastPrice === null) return null
+    const diff = currentPrice - pastPrice
+    const percent = pastPrice !== 0 ? (diff / pastPrice) * 100 : 0
+    return { diff, percent }
+  }
+
+  return {
+    h1: calculateTrend(1),
+    h12: calculateTrend(12),
+    h24: calculateTrend(24),
+  }
+}

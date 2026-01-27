@@ -246,18 +246,18 @@ export function PriceChart({
           </Tabs>
         </div>
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent className="px-2 sm:px-4 py-0">
         {loading ? (
           <div className="h-[280px] flex items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
           </div>
         ) : (
           <>
-            <div className="h-[280px] px-2">
+            <div className="h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart
                   data={chartData}
-                  margin={{ top: 20, right: displayTemperature ? 45 : 20, left: 0, bottom: 0 }}
+                  margin={{ top: 20, right: displayTemperature ? 0 : 20, left: 0, bottom: 0 }}
                 >
                   <defs>
                     <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
