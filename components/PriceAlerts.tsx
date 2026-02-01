@@ -7,8 +7,10 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
-import { Bell, BellOff, Loader2 } from "lucide-react"
+import { Bell, BellOff, Loader2, CheckCircle2, XCircle, AlertCircle } from "lucide-react"
 import { usePushNotifications } from "@/lib/usePushNotifications"
+
+type SubscriptionStatus = "active" | "error" | "inactive" | "loading" | "unsupported"
 
 interface AlertSettings {
   enabled: boolean
@@ -146,16 +148,64 @@ export function PriceAlerts() {
 
   const showUnsupportedMessage = !isSupported && isLoaded && !isPushLoading
 
+  // Determine subscription status for indicator
+  const getStatus = (): SubscriptionStatus => {
+    if (!isLoaded || isPushLoading) return "loading"
+    if (!isSupported) return "unsupported"
+    if (permissionStatus === "denied") return "error"
+    if (isSubscribed && settings.enabled) return "active"
+    return "inactive"
+  }
+
+  const status = getStatus()
+
+  const StatusIndicator = () => {
+    switch (status) {
+      case "active":
+        return (
+          <div className="flex items-center gap-1.5 text-xs text-green-600">
+            <CheckCircle2 className="h-4 w-4" />
+            <span>{t("alerts.statusActive")}</span>
+          </div>
+        )
+      case "error":
+        return (
+          <div className="flex items-center gap-1.5 text-xs text-red-600">
+            <XCircle className="h-4 w-4" />
+            <span>{t("alerts.statusBlocked")}</span>
+          </div>
+        )
+      case "unsupported":
+        return (
+          <div className="flex items-center gap-1.5 text-xs text-orange-600">
+            <AlertCircle className="h-4 w-4" />
+            <span>{t("alerts.statusUnsupported")}</span>
+          </div>
+        )
+      case "loading":
+        return (
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" />
+          </div>
+        )
+      default:
+        return null
+    }
+  }
+
   return (
     <Card>
       <CardHeader className="pb-2">
-        <div className="flex items-center gap-2">
-          {settings.enabled ? (
-            <Bell className="h-5 w-5 text-primary" />
-          ) : (
-            <BellOff className="h-5 w-5 text-muted-foreground" />
-          )}
-          <CardTitle className="text-lg font-medium">{t("alerts.title")}</CardTitle>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {settings.enabled ? (
+              <Bell className="h-5 w-5 text-primary" />
+            ) : (
+              <BellOff className="h-5 w-5 text-muted-foreground" />
+            )}
+            <CardTitle className="text-lg font-medium">{t("alerts.title")}</CardTitle>
+          </div>
+          <StatusIndicator />
         </div>
       </CardHeader>
       <CardContent className="space-y-6">

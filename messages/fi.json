@@ -61,7 +61,10 @@
     "notificationsRequirePermission": "Push-ilmoituksia ei tueta tässä selaimessa.",
     "subscribing": "Otetaan ilmoitukset käyttöön...",
     "subscribed": "Ilmoitukset käytössä! Saat hälytyksen kun hinnat vastaavat kynnysarvojasi.",
-    "unsubscribed": "Ilmoitukset poistettu käytöstä."
+    "unsubscribed": "Ilmoitukset poistettu käytöstä.",
+    "statusActive": "Aktiivinen",
+    "statusBlocked": "Estetty",
+    "statusUnsupported": "Ei tuettu"
   },
   "settings": {
     "title": "Asetukset",
