@@ -106,6 +106,30 @@ Optional for production:
 - `POSTGRES_PRISMA_URL` - PostgreSQL connection URL (pooled) for historical predictions
 - `POSTGRES_URL_NON_POOLING` - PostgreSQL direct connection URL for migrations
 
+For Web Push notifications:
+- `NEXT_PUBLIC_VAPID_PUBLIC_KEY` - VAPID public key (generate with `npx web-push generate-vapid-keys`)
+- `VAPID_PRIVATE_KEY` - VAPID private key
+- `VAPID_SUBJECT` - Contact email (e.g., `mailto:admin@spothinta.app`)
+- `CRON_SECRET` - Secret for authenticating cron requests
+
+## Push Notifications
+
+The app supports Web Push notifications for price alerts. Users can set thresholds for low/high prices and receive notifications when prices cross those thresholds.
+
+### Cron Job Setup
+
+Currently using Vercel Cron (once per day on Hobby plan). For more frequent checks, use an external cron service:
+
+**TODO:** Set up [cron-job.org](https://cron-job.org) or similar to call:
+```
+URL: https://finland-electricity-prices.vercel.app/api/cron/check-prices
+Method: GET
+Headers: Authorization: Bearer <CRON_SECRET>
+Schedule: Every hour (0 * * * *)
+```
+
+This will enable hourly price checks and notifications.
+
 ## Database (Optional)
 
 The app can store ML prediction history for comparison with actual prices:
