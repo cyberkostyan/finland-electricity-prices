@@ -20,3 +20,18 @@ model PredictionSnapshot {
   @@unique([fetchedAt, targetTime])
   @@index([targetTime])
 }
+
+model PushSubscription {
+  id                 String    @id @default(cuid())
+  endpoint           String    @unique
+  p256dhKey          String
+  authKey            String
+  lowPriceThreshold  Float     @default(3.0)
+  highPriceThreshold Float     @default(15.0)
+  alertsEnabled      Boolean   @default(true)
+  lastLowAlertAt     DateTime?
+  lastHighAlertAt    DateTime?
+  lastAlertPrice     Float?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}

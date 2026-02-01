@@ -58,7 +58,10 @@
     "highPriceDescription": "Warn when price exceeds this level",
     "sendTestNotification": "Send Test Notification",
     "notificationsBlocked": "Notifications are blocked. Please enable them in your browser settings.",
-    "notificationsRequirePermission": "Notifications require browser permission."
+    "notificationsRequirePermission": "Push notifications are not supported in this browser.",
+    "subscribing": "Enabling notifications...",
+    "subscribed": "Notifications enabled! You'll be alerted when prices match your thresholds.",
+    "unsubscribed": "Notifications disabled."
   },
   "settings": {
     "title": "Settings",

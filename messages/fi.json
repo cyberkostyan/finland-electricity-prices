@@ -58,7 +58,10 @@
     "highPriceDescription": "Varoita kun hinta ylittää tämän tason",
     "sendTestNotification": "Lähetä testiilmoitus",
     "notificationsBlocked": "Ilmoitukset on estetty. Ota ne käyttöön selaimen asetuksista.",
-    "notificationsRequirePermission": "Ilmoitukset vaativat selaimen luvan."
+    "notificationsRequirePermission": "Push-ilmoituksia ei tueta tässä selaimessa.",
+    "subscribing": "Otetaan ilmoitukset käyttöön...",
+    "subscribed": "Ilmoitukset käytössä! Saat hälytyksen kun hinnat vastaavat kynnysarvojasi.",
+    "unsubscribed": "Ilmoitukset poistettu käytöstä."
   },
   "settings": {
     "title": "Asetukset",

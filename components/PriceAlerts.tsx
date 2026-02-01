@@ -1,13 +1,14 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
-import { Bell, BellOff } from "lucide-react"
+import { Bell, BellOff, Loader2 } from "lucide-react"
+import { usePushNotifications } from "@/lib/usePushNotifications"
 
 interface AlertSettings {
   enabled: boolean
@@ -39,50 +40,111 @@ function loadSettings(): AlertSettings {
 export function PriceAlerts() {
   const t = useTranslations()
   const [settings, setSettings] = useState<AlertSettings>(DEFAULT_SETTINGS)
-  const [permissionStatus, setPermissionStatus] = useState<NotificationPermission>("default")
   const [isLoaded, setIsLoaded] = useState(false)
+
+  const {
+    isSupported,
+    isSubscribed,
+    isLoading: isPushLoading,
+    permissionStatus,
+    subscribe,
+    unsubscribe,
+    updateSettings: updatePushSettings,
+  } = usePushNotifications()
 
   // Load settings on mount
   useEffect(() => {
     const saved = loadSettings()
     setSettings(saved)
     setIsLoaded(true)
-
-    // Check notification permission
-    if ("Notification" in window) {
-      setPermissionStatus(Notification.permission)
-    }
   }, [])
 
-  // Save settings to localStorage (only after initial load)
+  // Sync enabled state with subscription status
+  useEffect(() => {
+    if (isLoaded && !isPushLoading) {
+      setSettings((s) => ({ ...s, enabled: isSubscribed }))
+    }
+  }, [isSubscribed, isLoaded, isPushLoading])
+
+  // Save settings to localStorage
   useEffect(() => {
     if (isLoaded) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settings))
     }
   }, [settings, isLoaded])
 
-  const requestPermission = async () => {
-    if ("Notification" in window) {
-      const permission = await Notification.requestPermission()
-      setPermissionStatus(permission)
-      if (permission === "granted") {
+  // Sync threshold changes to server (debounced in hook)
+  const handleThresholdChange = useCallback(
+    (key: "lowPriceThreshold" | "highPriceThreshold", value: number) => {
+      setSettings((s) => ({ ...s, [key]: value }))
+      if (isSubscribed) {
+        updatePushSettings({ [key]: value })
+      }
+    },
+    [isSubscribed, updatePushSettings]
+  )
+
+  const toggleAlerts = async (enabled: boolean) => {
+    if (enabled) {
+      const success = await subscribe({
+        lowPriceThreshold: settings.lowPriceThreshold,
+        highPriceThreshold: settings.highPriceThreshold,
+      })
+      if (success) {
         setSettings((s) => ({ ...s, enabled: true }))
-        // Show test notification
+      }
+    } else {
+      await unsubscribe()
+      setSettings((s) => ({ ...s, enabled: false }))
+    }
+  }
+
+  const sendTestNotification = async () => {
+    if (!isSupported) {
+      alert(t("alerts.notificationsRequirePermission"))
+      return
+    }
+
+    if (permissionStatus === "denied") {
+      alert(t("alerts.notificationsBlocked"))
+      return
+    }
+
+    if (!isSubscribed) {
+      const success = await subscribe({
+        lowPriceThreshold: settings.lowPriceThreshold,
+        highPriceThreshold: settings.highPriceThreshold,
+      })
+      if (!success) {
+        alert(t("alerts.notificationsRequirePermission"))
+        return
+      }
+    }
+
+    // Use browser Notification API for immediate test
+    try {
+      const registration = await navigator.serviceWorker.ready
+      await registration.showNotification(t("common.appName"), {
+        body: `${t("alerts.lowPriceAlert")}: < ${settings.lowPriceThreshold} ${t("price.centsPerKwh")}\n${t("alerts.highPriceAlert")}: > ${settings.highPriceThreshold} ${t("price.centsPerKwh")}`,
+        icon: "/icon-192.png",
+        badge: "/icon-192.png",
+        tag: "test-notification",
+      })
+    } catch (err) {
+      console.error("Failed to send test notification:", err)
+      // Fallback to browser Notification API
+      try {
         new Notification(t("common.appName"), {
-          body: t("alerts.enableDescription"),
-          icon: "/favicon.ico",
+          body: `${t("alerts.lowPriceAlert")}: < ${settings.lowPriceThreshold} ${t("price.centsPerKwh")}\n${t("alerts.highPriceAlert")}: > ${settings.highPriceThreshold} ${t("price.centsPerKwh")}`,
+          tag: "test-notification",
         })
+      } catch (fallbackErr) {
+        console.error("Fallback notification failed:", fallbackErr)
       }
     }
   }
 
-  const toggleAlerts = (enabled: boolean) => {
-    if (enabled && permissionStatus !== "granted") {
-      requestPermission()
-    } else {
-      setSettings((s) => ({ ...s, enabled }))
-    }
-  }
+  const showUnsupportedMessage = !isSupported && isLoaded && !isPushLoading
 
   return (
     <Card>
@@ -104,12 +166,22 @@ export function PriceAlerts() {
               {t("alerts.enableDescription")}
             </span>
           </Label>
-          <Switch
-            id="alerts-toggle"
-            checked={settings.enabled}
-            onCheckedChange={toggleAlerts}
-          />
+          <div className="flex items-center gap-2">
+            {isPushLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+            <Switch
+              id="alerts-toggle"
+              checked={settings.enabled}
+              onCheckedChange={toggleAlerts}
+              disabled={isPushLoading || showUnsupportedMessage}
+            />
+          </div>
         </div>
+
+        {showUnsupportedMessage && (
+          <div className="p-3 bg-muted text-muted-foreground rounded-lg text-sm">
+            {t("alerts.notificationsRequirePermission")}
+          </div>
+        )}
 
         {permissionStatus === "denied" && (
           <div className="p-3 bg-destructive/10 text-destructive rounded-lg text-sm">
@@ -128,7 +200,7 @@ export function PriceAlerts() {
             <Slider
               value={[settings.lowPriceThreshold]}
               onValueChange={([value]) =>
-                setSettings((s) => ({ ...s, lowPriceThreshold: value }))
+                handleThresholdChange("lowPriceThreshold", value)
               }
               min={0}
               max={10}
@@ -150,7 +222,7 @@ export function PriceAlerts() {
             <Slider
               value={[settings.highPriceThreshold]}
               onValueChange={([value]) =>
-                setSettings((s) => ({ ...s, highPriceThreshold: value }))
+                handleThresholdChange("highPriceThreshold", value)
               }
               min={5}
               max={50}
@@ -167,49 +239,12 @@ export function PriceAlerts() {
           <Button
             variant="outline"
             className="w-full"
-            onClick={async () => {
-              if (!("Notification" in window)) {
-                alert("This browser does not support notifications")
-                return
-              }
-
-              const currentPermission = Notification.permission
-
-              if (currentPermission === "granted") {
-                try {
-                  const notification = new Notification(t("common.appName"), {
-                    body: `${t("alerts.lowPriceAlert")}: < ${settings.lowPriceThreshold} ${t("price.centsPerKwh")}\n${t("alerts.highPriceAlert")}: > ${settings.highPriceThreshold} ${t("price.centsPerKwh")}`,
-                    tag: "test-notification",
-                  })
-                  notification.onclick = () => {
-                    window.focus()
-                    notification.close()
-                  }
-                } catch (err: unknown) {
-                  console.error("Failed to create notification:", err)
-                  const errorMessage = err instanceof Error ? err.message : String(err)
-                  alert(`Failed to send notification: ${errorMessage}`)
-                }
-              } else if (currentPermission === "denied") {
-                alert(t("alerts.notificationsBlocked"))
-              } else {
-                try {
-                  const permission = await Notification.requestPermission()
-                  setPermissionStatus(permission)
-                  if (permission === "granted") {
-                    new Notification(t("common.appName"), {
-                      body: t("alerts.enableDescription"),
-                      tag: "test-notification",
-                    })
-                  }
-                } catch (err: unknown) {
-                  console.error("Permission request failed:", err)
-                  const errorMessage = err instanceof Error ? err.message : String(err)
-                  alert(`Failed to request permission: ${errorMessage}`)
-                }
-              }
-            }}
+            onClick={sendTestNotification}
+            disabled={isPushLoading}
           >
+            {isPushLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            ) : null}
             {t("alerts.sendTestNotification")}
           </Button>
         )}
