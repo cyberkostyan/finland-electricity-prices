@@ -118,17 +118,18 @@ The app supports Web Push notifications for price alerts. Users can set threshol
 
 ### Cron Job Setup
 
-Currently using Vercel Cron (once per day on Hobby plan). For more frequent checks, use an external cron service:
+Price alerts require hourly checks. Since Vercel Hobby plan limits cron to daily, we use [cron-job.org](https://cron-job.org) (free tier):
 
-**TODO:** Set up [cron-job.org](https://cron-job.org) or similar to call:
-```
-URL: https://finland-electricity-prices.vercel.app/api/cron/check-prices
-Method: GET
-Headers: Authorization: Bearer <CRON_SECRET>
-Schedule: Every hour (0 * * * *)
-```
+1. Create account at https://cron-job.org
+2. Create new cron job:
+   - **Title:** Spothinta Price Check
+   - **URL:** `https://spothinta.app/api/cron/check-prices`
+   - **Schedule:** Every hour (`0 * * * *`)
+   - **Request method:** GET
+   - **Headers:** Add `Authorization: Bearer <CRON_SECRET>`
+3. Enable the job
 
-This will enable hourly price checks and notifications.
+To verify: trigger manual execution from dashboard and check Vercel function logs.
 
 ## Database (Optional)
 
