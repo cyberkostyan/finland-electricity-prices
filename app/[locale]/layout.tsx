@@ -3,6 +3,7 @@ import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/ThemeProvider"
 import { ConsentProvider } from "@/components/consent/ConsentProvider"
 import { AnalyticsWrapper } from "@/components/AnalyticsWrapper"
+import { PrivacyInfoBanner } from "@/components/PrivacyInfoBanner"
 import { NextIntlClientProvider } from "next-intl"
 import { getMessages, getTranslations } from "next-intl/server"
 import { notFound } from "next/navigation"
@@ -185,6 +186,7 @@ export default async function LocaleLayout({
             <ConsentProvider>
               {children}
               <AnalyticsWrapper />
+              <PrivacyInfoBanner />
             </ConsentProvider>
           </ThemeProvider>
         </NextIntlClientProvider>

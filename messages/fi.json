@@ -109,6 +109,12 @@
     "supportProject": "Tue projektia",
     "privacy": "Tietosuoja"
   },
+  "privacyBanner": {
+    "title": "Yksityisyytesi on tärkeä.",
+    "message": "Analytiikka on oletuksena pois päältä. Voit ottaa sen käyttöön",
+    "settingsLink": "Asetuksissa",
+    "dismiss": "Sulje"
+  },
   "privacy": {
     "title": "Tietosuojakäytäntö",
     "lastUpdated": "Viimeksi päivitetty",

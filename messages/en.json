@@ -109,6 +109,12 @@
     "supportProject": "Support the project",
     "privacy": "Privacy"
   },
+  "privacyBanner": {
+    "title": "Your privacy matters.",
+    "message": "Analytics are disabled by default. You can enable them in",
+    "settingsLink": "Settings",
+    "dismiss": "Dismiss"
+  },
   "privacy": {
     "title": "Privacy Policy",
     "lastUpdated": "Last updated",
