@@ -40,7 +40,9 @@
     "mlPrediction": "ML-ennuste",
     "prediction": "ennuste",
     "historicalPrediction": "Edellinen ennuste",
-    "temperature": "Lämpötila (Helsinki)"
+    "temperature": "Lämpötila (Helsinki)",
+    "lowAlert": "Alhainen hälytys",
+    "highAlert": "Korkea hälytys"
   },
   "bestHours": {
     "title": "Parhaat tunnit",

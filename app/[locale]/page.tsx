@@ -32,6 +32,11 @@ export default function Home() {
   const [refreshing, setRefreshing] = useState(false)
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
+  const [alertThresholds, setAlertThresholds] = useState<{
+    enabled: boolean
+    lowPrice: number
+    highPrice: number
+  } | undefined>()
 
   const getDateRange = useCallback((view: "24h" | "7d" | "30d") => {
     const end = new Date()
@@ -91,6 +96,23 @@ export default function Home() {
   useEffect(() => {
     loadPrices()
   }, [loadPrices])
+
+  // Load alert settings from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("priceAlertSettings")
+      if (saved) {
+        const settings = JSON.parse(saved)
+        setAlertThresholds({
+          enabled: settings.enabled ?? false,
+          lowPrice: settings.lowPriceThreshold ?? 3,
+          highPrice: settings.highPriceThreshold ?? 15,
+        })
+      }
+    } catch (e) {
+      console.error("Failed to load alert settings:", e)
+    }
+  }, [])
 
   // Auto-refresh every 5 minutes
   useEffect(() => {
@@ -172,6 +194,7 @@ export default function Home() {
           view={view}
           onViewChange={setView}
           loading={loading}
+          alertThresholds={alertThresholds}
         />
 
         {/* Footer */}

@@ -26,6 +26,11 @@ interface PriceChartProps {
   view: "24h" | "7d" | "30d"
   onViewChange: (view: "24h" | "7d" | "30d") => void
   loading?: boolean
+  alertThresholds?: {
+    enabled: boolean
+    lowPrice: number
+    highPrice: number
+  }
 }
 
 interface ChartDataPoint {
@@ -54,6 +59,7 @@ export function PriceChart({
   view,
   onViewChange,
   loading,
+  alertThresholds,
 }: PriceChartProps) {
   const t = useTranslations()
   const [showTemperature, setShowTemperature] = useState(true)
@@ -312,6 +318,38 @@ export function PriceChart({
                       fontSize: 10,
                     }}
                   />
+                  {/* Low price alert threshold (green) */}
+                  {alertThresholds?.enabled && (
+                    <ReferenceLine
+                      yAxisId="price"
+                      y={alertThresholds.lowPrice}
+                      stroke="#22c55e"
+                      strokeDasharray="6 3"
+                      strokeOpacity={0.8}
+                      label={{
+                        value: `< ${alertThresholds.lowPrice}`,
+                        position: "insideBottomLeft",
+                        fill: "#22c55e",
+                        fontSize: 10,
+                      }}
+                    />
+                  )}
+                  {/* High price alert threshold (red) */}
+                  {alertThresholds?.enabled && (
+                    <ReferenceLine
+                      yAxisId="price"
+                      y={alertThresholds.highPrice}
+                      stroke="#ef4444"
+                      strokeDasharray="6 3"
+                      strokeOpacity={0.8}
+                      label={{
+                        value: `> ${alertThresholds.highPrice}`,
+                        position: "insideTopLeft",
+                        fill: "#ef4444",
+                        fontSize: 10,
+                      }}
+                    />
+                  )}
                   {/* Temperature line */}
                   {displayTemperature && (
                     <Line
@@ -473,6 +511,18 @@ export function PriceChart({
                   />
                   <span>{t("chart.temperature")}</span>
                 </button>
+              )}
+              {alertThresholds?.enabled && (
+                <>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-0.5 border-t-2 border-dashed" style={{ borderColor: "#22c55e" }} />
+                    <span>{t("chart.lowAlert")}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-0.5 border-t-2 border-dashed" style={{ borderColor: "#ef4444" }} />
+                    <span>{t("chart.highAlert")}</span>
+                  </div>
+                </>
               )}
             </div>
             <div className="grid grid-cols-3 gap-4 p-4 border-t bg-muted/30">

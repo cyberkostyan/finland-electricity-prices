@@ -40,7 +40,9 @@
     "mlPrediction": "ML Prediction",
     "prediction": "prediction",
     "historicalPrediction": "Previous forecast",
-    "temperature": "Temperature (Helsinki)"
+    "temperature": "Temperature (Helsinki)",
+    "lowAlert": "Low alert",
+    "highAlert": "High alert"
   },
   "bestHours": {
     "title": "Best Hours",
