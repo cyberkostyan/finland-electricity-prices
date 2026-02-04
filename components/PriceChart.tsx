@@ -57,7 +57,7 @@ export function PriceChart({
 }: PriceChartProps) {
   const t = useTranslations()
   const [showTemperature, setShowTemperature] = useState(true)
-  const [showHistoricalPrediction, setShowHistoricalPrediction] = useState(true)
+  const [showHistoricalPrediction, setShowHistoricalPrediction] = useState(false)
   const stats = calculateStats(prices)
 
   const now = new Date()
