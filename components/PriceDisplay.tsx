@@ -127,13 +127,15 @@ export function PriceDisplay({
         {availableTrends.length > 0 && (
           <div className="flex items-center gap-1 mt-2 text-sm flex-wrap">
             <span className="text-muted-foreground">{t("price.vs")}:</span>
-            {availableTrends.map((item, index) =>
-              renderTrendItem(
-                item.label,
-                item.trend,
-                index < availableTrends.length - 1
-              )
-            )}
+            {availableTrends.map((item, index) => (
+              <span key={item.key} className="contents">
+                {renderTrendItem(
+                  item.label,
+                  item.trend,
+                  index < availableTrends.length - 1
+                )}
+              </span>
+            ))}
           </div>
         )}
         {forecast && forecastPercent !== null && (
