@@ -15,6 +15,7 @@ import {
   type TemperatureData,
   type HistoricalPrediction,
 } from "@/lib/api"
+import { useGeolocation } from "@/hooks/useGeolocation"
 import { Link } from "@/i18n/navigation"
 import { Zap, RefreshCw, History, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -37,6 +38,7 @@ export default function Home() {
     lowPrice: number
     highPrice: number
   } | undefined>()
+  const { lat, lon, isDefault: isDefaultLocation, requestLocation } = useGeolocation()
 
   const getDateRange = useCallback((view: "24h" | "7d" | "30d") => {
     const end = new Date()
@@ -74,7 +76,7 @@ export default function Home() {
           fetchPrices(start, end),
           fetchPredictions().catch(() => []), // Don't fail if predictions unavailable
           fetchHistoricalPredictions(start, end).catch(() => []), // Fetch for full price range (prices are known ahead from NordPool)
-          fetchWeather(view).catch(() => []), // Don't fail if weather unavailable
+          fetchWeather(view, lat, lon).catch(() => []), // Don't fail if weather unavailable
         ])
 
         setPrices(pricesData)
@@ -90,7 +92,7 @@ export default function Home() {
         setRefreshing(false)
       }
     },
-    [view, getDateRange]
+    [view, getDateRange, lat, lon]
   )
 
   useEffect(() => {
@@ -195,6 +197,8 @@ export default function Home() {
           onViewChange={setView}
           loading={loading}
           alertThresholds={alertThresholds}
+          isDefaultLocation={isDefaultLocation}
+          onRequestLocation={requestLocation}
         />
 
         {/* Footer */}

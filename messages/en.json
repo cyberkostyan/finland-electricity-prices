@@ -40,9 +40,21 @@
     "mlPrediction": "ML Prediction",
     "prediction": "prediction",
     "historicalPrediction": "Previous forecast",
-    "temperature": "Temperature (Helsinki)",
+    "temperature": "Temperature",
+    "temperatureHelsinki": "Temperature (Helsinki)",
+    "temperatureYourLocation": "Temperature (Your location)",
     "lowAlert": "Low alert",
     "highAlert": "High alert"
+  },
+  "weather": {
+    "clear": "Clear",
+    "partlyCloudy": "Partly cloudy",
+    "cloudy": "Cloudy",
+    "fog": "Fog",
+    "drizzle": "Drizzle",
+    "rain": "Rain",
+    "snow": "Snow",
+    "thunderstorm": "Thunderstorm"
   },
   "bestHours": {
     "title": "Best Hours",
@@ -134,7 +146,8 @@
           "title": "Necessary Data (stored locally in your browser)",
           "language": "Language preference",
           "theme": "Theme preference (light/dark mode)",
-          "alerts": "Price alert settings (notification thresholds)"
+          "alerts": "Price alert settings (notification thresholds)",
+          "location": "Approximate location coordinates (if shared)"
         },
         "optional": {
           "title": "Optional Analytics (only if you enable them)",
@@ -160,7 +173,7 @@
         "intro": "We use the following third-party services:",
         "vercel": "Hosting and analytics (if enabled). Vercel may process data in the US under appropriate safeguards.",
         "sahkotin": "Electricity price data API. No personal data is sent to this service.",
-        "openMeteo": "Weather data API. No personal data is sent to this service."
+        "openMeteo": "Weather data API. If you share your location, approximate coordinates (rounded to ~1km) are sent to fetch local weather. Coordinates are not stored on our servers."
       },
       "dataRetention": {
         "title": "5. Data Retention",

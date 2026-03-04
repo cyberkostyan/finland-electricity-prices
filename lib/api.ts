@@ -12,6 +12,8 @@ export interface CheapHour {
 export interface TemperatureData {
   date: string
   temperature: number
+  weatherCode?: number
+  isDay?: boolean
 }
 
 export interface HistoricalPrediction {
@@ -62,7 +64,11 @@ export async function fetchCheapestHours(hours: number = 3, deadline?: Date): Pr
   return response.json()
 }
 
-export async function fetchWeather(view: "24h" | "7d" | "30d"): Promise<TemperatureData[]> {
+export async function fetchWeather(
+  view: "24h" | "7d" | "30d",
+  lat?: number,
+  lon?: number
+): Promise<TemperatureData[]> {
   // Adjust past_days and forecast_days based on view
   let pastDays: number
   let forecastDays: number
@@ -82,9 +88,16 @@ export async function fetchWeather(view: "24h" | "7d" | "30d"): Promise<Temperat
       break
   }
 
-  const response = await fetch(
-    `/api/weather?past_days=${pastDays}&forecast_days=${forecastDays}`
-  )
+  const params = new URLSearchParams({
+    past_days: pastDays.toString(),
+    forecast_days: forecastDays.toString(),
+  })
+  if (lat !== undefined && lon !== undefined) {
+    params.set("lat", lat.toString())
+    params.set("lon", lon.toString())
+  }
+
+  const response = await fetch(`/api/weather?${params}`)
 
   if (!response.ok) {
     throw new Error("Failed to fetch weather data")

@@ -16,6 +16,7 @@ import {
   ReferenceLine,
 } from "recharts"
 import { PriceData, TemperatureData, HistoricalPrediction, calculateStats } from "@/lib/api"
+import { getWeatherIcon, getWeatherLabelKey } from "@/lib/weather"
 import { formatPrice } from "@/lib/utils"
 
 interface PriceChartProps {
@@ -31,6 +32,8 @@ interface PriceChartProps {
     lowPrice: number
     highPrice: number
   }
+  isDefaultLocation?: boolean
+  onRequestLocation?: () => void
 }
 
 interface ChartDataPoint {
@@ -41,6 +44,8 @@ interface ChartDataPoint {
   prediction?: number
   histPrediction?: number
   temperature?: number
+  weatherCode?: number
+  isDay?: boolean
   date: Date
   isCurrent?: boolean
   isPrediction?: boolean
@@ -60,6 +65,8 @@ export function PriceChart({
   onViewChange,
   loading,
   alertThresholds,
+  isDefaultLocation = true,
+  onRequestLocation,
 }: PriceChartProps) {
   const t = useTranslations()
   const [showTemperature, setShowTemperature] = useState(true)
@@ -95,17 +102,26 @@ export function PriceChart({
     })
     .slice(0, getPredictionLimit())
 
-  // Create temperature lookup map by hour
+  // Create temperature + weather code lookup maps by hour
   const tempMap = new Map<string, number>()
+  const weatherCodeMap = new Map<string, number>()
+  const isDayMap = new Map<string, boolean>()
   temperatures.forEach(t => {
     const date = new Date(t.date)
     const key = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}-${date.getHours()}`
     tempMap.set(key, t.temperature)
+    if (t.weatherCode !== undefined) weatherCodeMap.set(key, t.weatherCode)
+    if (t.isDay !== undefined) isDayMap.set(key, t.isDay)
   })
 
   const getTemperature = (date: Date): number | undefined => {
     const key = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}-${date.getHours()}`
     return tempMap.get(key)
+  }
+
+  const getWeatherData = (date: Date): { weatherCode?: number; isDay?: boolean } => {
+    const key = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}-${date.getHours()}`
+    return { weatherCode: weatherCodeMap.get(key), isDay: isDayMap.get(key) }
   }
 
   // Create historical prediction lookup map by hour
@@ -144,6 +160,7 @@ export function PriceChart({
   const priceData: ChartDataPoint[] = prices.map((p, index) => {
     const date = new Date(p.date)
     const isCurrent = date.getTime() === currentHourUTC
+    const weather = getWeatherData(date)
 
     return {
       time: formatTime(date),
@@ -152,6 +169,8 @@ export function PriceChart({
       price: p.value,
       histPrediction: showHistoricalPrediction ? getHistoricalPrediction(date) : undefined,
       temperature: getTemperature(date),
+      weatherCode: weather.weatherCode,
+      isDay: weather.isDay,
       date,
       isCurrent,
       isPrediction: false,
@@ -161,6 +180,7 @@ export function PriceChart({
   // Add predictions to chart data
   const predictionData: ChartDataPoint[] = futurePredictions.map((p, index) => {
     const date = new Date(p.date)
+    const weather = getWeatherData(date)
 
     return {
       time: formatTime(date),
@@ -168,6 +188,8 @@ export function PriceChart({
       fullTime: date.toLocaleString("fi-FI"),
       prediction: p.value,
       temperature: getTemperature(date),
+      weatherCode: weather.weatherCode,
+      isDay: weather.isDay,
       date,
       isCurrent: false,
       isPrediction: true,
@@ -218,7 +240,15 @@ export function PriceChart({
           )}
           {data.temperature !== undefined && showTemperature && (
             <p className="text-sm mt-1" style={{ color: TEMP_COLOR }}>
-              {data.temperature.toFixed(1)}°C
+              {data.weatherCode !== undefined && (
+                <span className="mr-1">
+                  {getWeatherIcon(data.weatherCode, data.isDay ?? true)}
+                </span>
+              )}
+              {data.weatherCode !== undefined && (
+                <span className="mr-1">{t(getWeatherLabelKey(data.weatherCode))}</span>
+              )}
+              <span>· {data.temperature.toFixed(1)}°C</span>
             </p>
           )}
         </div>
@@ -468,6 +498,10 @@ export function PriceChart({
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
+            {/* Weather icon strip */}
+            {displayTemperature && view !== "30d" && (
+              <WeatherIconStrip chartData={chartData} view={view} />
+            )}
             {/* Legend */}
             <div className="flex items-center justify-center gap-4 sm:gap-6 px-4 py-2 text-xs text-muted-foreground border-t flex-wrap">
               <div className="flex items-center gap-2">
@@ -509,7 +543,20 @@ export function PriceChart({
                     className="w-4 h-0.5"
                     style={{ backgroundColor: TEMP_COLOR, opacity: showTemperature ? 1 : 0.5 }}
                   />
-                  <span>{t("chart.temperature")}</span>
+                  <span>
+                    {isDefaultLocation
+                      ? t("chart.temperatureHelsinki")
+                      : t("chart.temperatureYourLocation")}
+                  </span>
+                </button>
+              )}
+              {hasTemperature && isDefaultLocation && onRequestLocation && (
+                <button
+                  onClick={onRequestLocation}
+                  className="text-xs text-primary hover:underline px-1"
+                  title={t("chart.temperatureYourLocation")}
+                >
+                  📍
                 </button>
               )}
               {alertThresholds?.enabled && (
@@ -549,5 +596,36 @@ export function PriceChart({
         )}
       </CardContent>
     </Card>
+  )
+}
+
+// Weather icon strip component shown below chart
+function WeatherIconStrip({
+  chartData,
+  view,
+}: {
+  chartData: ChartDataPoint[]
+  view: "24h" | "7d" | "30d"
+}) {
+  // Sample interval: every 3h for 24h view, every 6h for 7d
+  const interval = view === "24h" ? 3 : 6
+  const hasWeather = chartData.some(d => d.weatherCode !== undefined)
+  if (!hasWeather) return null
+
+  const sampled = chartData.filter((_, i) => i % interval === 0)
+
+  return (
+    <div
+      className="flex items-center justify-between text-sm border-t px-1 py-1 overflow-hidden"
+      style={{ marginLeft: 45, marginRight: 35 }}
+    >
+      {sampled.map((d, i) => (
+        <span key={i} className="text-center" style={{ minWidth: 0, flex: 1 }} title={d.time}>
+          {d.weatherCode !== undefined
+            ? getWeatherIcon(d.weatherCode, d.isDay ?? true)
+            : ""}
+        </span>
+      ))}
+    </div>
   )
 }

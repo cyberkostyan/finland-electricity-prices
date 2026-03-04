@@ -40,9 +40,21 @@
     "mlPrediction": "ML-ennuste",
     "prediction": "ennuste",
     "historicalPrediction": "Edellinen ennuste",
-    "temperature": "Lämpötila (Helsinki)",
+    "temperature": "Lämpötila",
+    "temperatureHelsinki": "Lämpötila (Helsinki)",
+    "temperatureYourLocation": "Lämpötila (Sijaintisi)",
     "lowAlert": "Alhainen hälytys",
     "highAlert": "Korkea hälytys"
+  },
+  "weather": {
+    "clear": "Selkeä",
+    "partlyCloudy": "Puolipilvinen",
+    "cloudy": "Pilvinen",
+    "fog": "Sumu",
+    "drizzle": "Tihku",
+    "rain": "Sade",
+    "snow": "Lumi",
+    "thunderstorm": "Ukkonen"
   },
   "bestHours": {
     "title": "Parhaat tunnit",
@@ -134,7 +146,8 @@
           "title": "Välttämättömät tiedot (tallennetaan paikallisesti selaimeen)",
           "language": "Kieliasetus",
           "theme": "Teema-asetus (vaalea/tumma tila)",
-          "alerts": "Hintahälytysten asetukset (ilmoitusrajat)"
+          "alerts": "Hintahälytysten asetukset (ilmoitusrajat)",
+          "location": "Likimääräiset sijaintikoordinaatit (jos jaettu)"
         },
         "optional": {
           "title": "Valinnainen analytiikka (vain jos otat käyttöön)",
@@ -160,7 +173,7 @@
         "intro": "Käytämme seuraavia kolmannen osapuolen palveluita:",
         "vercel": "Palvelinpalvelu ja analytiikka (jos käytössä). Vercel voi käsitellä tietoja USA:ssa asianmukaisten suojatoimien alaisena.",
         "sahkotin": "Sähkön hintadata-API. Henkilötietoja ei lähetetä tälle palvelulle.",
-        "openMeteo": "Säätietojen API. Henkilötietoja ei lähetetä tälle palvelulle."
+        "openMeteo": "Säätietojen API. Jos jaat sijaintisi, likimääräiset koordinaatit (pyöristetty ~1 km:iin) lähetetään paikallisen sään hakemiseen. Koordinaatteja ei tallenneta palvelimillemme."
       },
       "dataRetention": {
         "title": "5. Tietojen säilytys",

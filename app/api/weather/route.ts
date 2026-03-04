@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server"
 
-// Helsinki coordinates (central Finland for representative temperature)
-const HELSINKI_LAT = 60.17
-const HELSINKI_LON = 24.94
+// Helsinki coordinates (default fallback)
+const DEFAULT_LAT = 60.17
+const DEFAULT_LON = 24.94
 
 interface OpenMeteoResponse {
   hourly: {
     time: string[]
     temperature_2m: number[]
+    weather_code: number[]
+    is_day: number[]
   }
 }
 
@@ -16,8 +18,14 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const pastDays = searchParams.get("past_days") || "1"
     const forecastDays = searchParams.get("forecast_days") || "7"
+    const lat = parseFloat(searchParams.get("lat") || "") || DEFAULT_LAT
+    const lon = parseFloat(searchParams.get("lon") || "") || DEFAULT_LON
 
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${HELSINKI_LAT}&longitude=${HELSINKI_LON}&hourly=temperature_2m&past_days=${pastDays}&forecast_days=${forecastDays}&timezone=Europe%2FHelsinki`
+    // Clamp coordinates to valid ranges
+    const clampedLat = Math.max(-90, Math.min(90, lat))
+    const clampedLon = Math.max(-180, Math.min(180, lon))
+
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${clampedLat}&longitude=${clampedLon}&hourly=temperature_2m,weather_code,is_day&past_days=${pastDays}&forecast_days=${forecastDays}&timezone=Europe%2FHelsinki`
 
     const response = await fetch(url, {
       next: { revalidate: 3600 }, // Cache for 1 hour
@@ -33,6 +41,8 @@ export async function GET(request: Request) {
     const temperatures = data.hourly.time.map((time, index) => ({
       date: time,
       temperature: data.hourly.temperature_2m[index],
+      weatherCode: data.hourly.weather_code[index],
+      isDay: data.hourly.is_day[index] === 1,
     }))
 
     return NextResponse.json(temperatures)
