@@ -600,6 +600,7 @@ export function PriceChart({
 }
 
 // Weather icon strip component shown below chart
+// Positions icons using percentage-based alignment matching recharts' categorical axis
 function WeatherIconStrip({
   chartData,
   view,
@@ -610,23 +611,36 @@ function WeatherIconStrip({
   const hasWeather = chartData.some(d => d.weatherCode !== undefined)
   if (!hasWeather) return null
 
-  // Target ~6-8 icons regardless of data length
-  const targetCount = view === "24h" ? 8 : 6
-  const interval = Math.max(1, Math.floor(chartData.length / targetCount))
-  const sampled = chartData.filter((_, i) => i % interval === 0).slice(0, targetCount)
+  // Sample at fixed hour boundaries (00, 06, 12, 18 for 24h; every 12h for 7d)
+  const hourInterval = view === "24h" ? 6 : 12
+  const totalPoints = chartData.length
+
+  const sampled = chartData
+    .map((d, i) => ({ ...d, dataIndex: i }))
+    .filter(d => d.date.getHours() % hourInterval === 0)
+
+  if (sampled.length === 0 || totalPoints < 2) return null
 
   return (
     <div
-      className="flex items-center justify-between text-xs border-t px-1 py-1 overflow-hidden"
-      style={{ marginLeft: 45, marginRight: 35 }}
+      className="relative border-t overflow-hidden"
+      style={{ marginLeft: 45, marginRight: 35, height: 22 }}
     >
-      {sampled.map((d, i) => (
-        <span key={i} className="text-center" style={{ minWidth: 0, flex: 1 }} title={d.time}>
-          {d.weatherCode !== undefined
-            ? getWeatherIcon(d.weatherCode, d.isDay ?? true)
-            : ""}
-        </span>
-      ))}
+      {sampled.map((d, i) => {
+        const leftPercent = (d.dataIndex / (totalPoints - 1)) * 100
+        return (
+          <span
+            key={i}
+            className="absolute text-xs -translate-x-1/2"
+            style={{ left: `${leftPercent}%`, top: 2 }}
+            title={d.time}
+          >
+            {d.weatherCode !== undefined
+              ? getWeatherIcon(d.weatherCode, d.isDay ?? true)
+              : ""}
+          </span>
+        )
+      })}
     </div>
   )
 }
