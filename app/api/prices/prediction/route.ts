@@ -4,6 +4,17 @@ import { getPrisma } from "@/lib/prisma"
 const PREDICTION_API_URL =
   "https://raw.githubusercontent.com/vividfog/nordpool-predict-fi/main/deploy/prediction.json"
 
+const DB_SAVE_TIMEOUT_MS = 5000
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`Timed out after ${ms}ms`)), ms)
+    ),
+  ])
+}
+
 export async function GET() {
   try {
     const response = await fetch(PREDICTION_API_URL, {
@@ -23,10 +34,12 @@ export async function GET() {
       isPrediction: true,
     }))
 
-    // Save predictions to database (non-blocking, don't fail if DB is unavailable)
-    savePredictionsToDb(predictions).catch((err) => {
+    // Await DB save before returning (Vercel kills detached promises after response)
+    try {
+      await withTimeout(savePredictionsToDb(predictions), DB_SAVE_TIMEOUT_MS)
+    } catch (err) {
       console.error("Failed to save predictions to DB:", err)
-    })
+    }
 
     return NextResponse.json({ predictions })
   } catch (error) {
@@ -43,7 +56,7 @@ async function savePredictionsToDb(
 ) {
   const prisma = getPrisma()
   if (!prisma) {
-    // Database not configured - skip saving
+    console.warn("savePredictionsToDb: Prisma unavailable, skipping DB save")
     return
   }
 
@@ -60,7 +73,7 @@ async function savePredictionsToDb(
   )
 
   // Use createMany with skipDuplicates to efficiently insert predictions
-  await prisma.predictionSnapshot.createMany({
+  const result = await prisma.predictionSnapshot.createMany({
     data: predictions.map((p) => ({
       fetchedAt,
       targetTime: new Date(p.date),
@@ -68,4 +81,8 @@ async function savePredictionsToDb(
     })),
     skipDuplicates: true,
   })
+
+  console.log(
+    `savePredictionsToDb: saved ${result.count} predictions for fetchedAt=${fetchedAt.toISOString()}`
+  )
 }
