@@ -39,7 +39,7 @@
     "officialPrice": "Official price",
     "mlPrediction": "ML Prediction",
     "prediction": "prediction",
-    "historicalPrediction": "Previous forecast",
+    "historicalPrediction": "Forecast",
     "temperature": "Temperature",
     "temperatureHelsinki": "Temperature (Helsinki)",
     "temperatureYourLocation": "Temperature (Your location)",

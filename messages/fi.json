@@ -39,7 +39,7 @@
     "officialPrice": "Virallinen hinta",
     "mlPrediction": "ML-ennuste",
     "prediction": "ennuste",
-    "historicalPrediction": "Edellinen ennuste",
+    "historicalPrediction": "Ennuste",
     "temperature": "Lämpötila",
     "temperatureHelsinki": "Lämpötila (Helsinki)",
     "temperatureYourLocation": "Lämpötila (Sijaintisi)",
