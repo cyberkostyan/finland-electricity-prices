@@ -607,16 +607,17 @@ function WeatherIconStrip({
   chartData: ChartDataPoint[]
   view: "24h" | "7d" | "30d"
 }) {
-  // Sample interval: every 3h for 24h view, every 6h for 7d
-  const interval = view === "24h" ? 3 : 6
   const hasWeather = chartData.some(d => d.weatherCode !== undefined)
   if (!hasWeather) return null
 
-  const sampled = chartData.filter((_, i) => i % interval === 0)
+  // Target ~6-8 icons regardless of data length
+  const targetCount = view === "24h" ? 8 : 6
+  const interval = Math.max(1, Math.floor(chartData.length / targetCount))
+  const sampled = chartData.filter((_, i) => i % interval === 0).slice(0, targetCount)
 
   return (
     <div
-      className="flex items-center justify-between text-sm border-t px-1 py-1 overflow-hidden"
+      className="flex items-center justify-between text-xs border-t px-1 py-1 overflow-hidden"
       style={{ marginLeft: 45, marginRight: 35 }}
     >
       {sampled.map((d, i) => (
