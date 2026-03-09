@@ -41,19 +41,29 @@ export default function Home() {
   const { lat, lon, isDefault: isDefaultLocation, requestLocation } = useGeolocation()
 
   const getDateRange = useCallback((view: "24h" | "7d" | "30d") => {
-    const end = new Date()
-    end.setHours(end.getHours() + 24) // Include future prices for today/tomorrow
+    const now = new Date()
     const start = new Date()
+    let end: Date
 
     switch (view) {
       case "24h":
-        start.setHours(start.getHours() - 24)
+        // Show 12h of history + all available future prices (until end of tomorrow)
+        start.setHours(start.getHours() - 12)
+        end = new Date(now)
+        end.setDate(end.getDate() + 2)
+        end.setHours(0, 0, 0, 0) // Start of day after tomorrow = end of tomorrow
         break
       case "7d":
         start.setDate(start.getDate() - 7)
+        end = new Date(now)
+        end.setDate(end.getDate() + 2)
+        end.setHours(0, 0, 0, 0)
         break
       case "30d":
         start.setDate(start.getDate() - 30)
+        end = new Date(now)
+        end.setDate(end.getDate() + 2)
+        end.setHours(0, 0, 0, 0)
         break
     }
 
