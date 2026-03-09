@@ -76,15 +76,15 @@ export async function fetchWeather(
   switch (view) {
     case "24h":
       pastDays = 1
-      forecastDays = 2
+      forecastDays = 3 // Cover predictions extending beyond tomorrow
       break
     case "7d":
       pastDays = 7
-      forecastDays = 7
+      forecastDays = 8
       break
     case "30d":
       pastDays = 30
-      forecastDays = 7
+      forecastDays = 8
       break
   }
 
