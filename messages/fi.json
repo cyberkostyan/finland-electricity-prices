@@ -43,6 +43,7 @@
     "temperature": "Lämpötila",
     "temperatureHelsinki": "Lämpötila (Helsinki)",
     "temperatureYourLocation": "Lämpötila (Sijaintisi)",
+    "temperatureCity": "Lämpötila ({city})",
     "lowAlert": "Alhainen hälytys",
     "highAlert": "Korkea hälytys"
   },

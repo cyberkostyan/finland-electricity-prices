@@ -38,7 +38,7 @@ export default function Home() {
     lowPrice: number
     highPrice: number
   } | undefined>()
-  const { lat, lon, isDefault: isDefaultLocation, requestLocation } = useGeolocation()
+  const { lat, lon, isDefault: isDefaultLocation, cityName, requestLocation } = useGeolocation()
 
   const getDateRange = useCallback((view: "24h" | "7d" | "30d") => {
     const now = new Date()
@@ -208,6 +208,7 @@ export default function Home() {
           loading={loading}
           alertThresholds={alertThresholds}
           isDefaultLocation={isDefaultLocation}
+          locationCityName={cityName}
           onRequestLocation={requestLocation}
         />
 

@@ -43,6 +43,7 @@
     "temperature": "Temperature",
     "temperatureHelsinki": "Temperature (Helsinki)",
     "temperatureYourLocation": "Temperature (Your location)",
+    "temperatureCity": "Temperature ({city})",
     "lowAlert": "Low alert",
     "highAlert": "High alert"
   },

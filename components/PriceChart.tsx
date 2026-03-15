@@ -33,6 +33,7 @@ interface PriceChartProps {
     highPrice: number
   }
   isDefaultLocation?: boolean
+  locationCityName?: string | null
   onRequestLocation?: () => void
 }
 
@@ -66,6 +67,7 @@ export function PriceChart({
   loading,
   alertThresholds,
   isDefaultLocation = true,
+  locationCityName,
   onRequestLocation,
 }: PriceChartProps) {
   const t = useTranslations()
@@ -546,7 +548,9 @@ export function PriceChart({
                   <span>
                     {isDefaultLocation
                       ? t("chart.temperatureHelsinki")
-                      : t("chart.temperatureYourLocation")}
+                      : locationCityName
+                        ? t("chart.temperatureCity", { city: locationCityName })
+                        : t("chart.temperatureYourLocation")}
                   </span>
                 </button>
               )}
