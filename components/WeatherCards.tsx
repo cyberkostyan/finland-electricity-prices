@@ -85,35 +85,48 @@ function SkeletonCard() {
   )
 }
 
-function DailyCard({ card, locale }: { card: ReturnType<typeof groupByDay>[0]; locale: string }) {
-  const t = useTranslations("chart")
+function DailyCard({ card, locale, isToday }: { card: ReturnType<typeof groupByDay>[0]; locale: string; isToday: boolean }) {
+  const t = useTranslations("price")
 
   // Parse YYYY-MM-DD dateKey and format for display
   const [year, month, day] = card.dateKey.split("-").map(Number)
   const displayDate = new Date(year, month - 1, day)
-  const dateLabel = displayDate.toLocaleDateString(locale === "fi" ? "fi-FI" : "en-US", {
+  const weekday = displayDate.toLocaleDateString(locale === "fi" ? "fi-FI" : "en-US", {
     weekday: "short",
-    month: "short",
-    day: "numeric",
   })
+  const dateNum = displayDate.getDate()
+
+  // Pick the "day" period icon (index 2 = chart.day, 12-18h) as the main icon
+  const dayPeriod = card.periods[2] // chart.day
+  const mainIcon = dayPeriod?.weatherCode !== null
+    ? getWeatherIcon(dayPeriod.weatherCode!, dayPeriod.isDay)
+    : card.periods.find(p => p.weatherCode !== null)
+      ? getWeatherIcon(card.periods.find(p => p.weatherCode !== null)!.weatherCode!, true)
+      : null
+
+  // Temperature range from all periods
+  const temps = card.periods.map(p => p.temperature).filter((t): t is number => t !== null)
+  const tempMin = temps.length > 0 ? Math.min(...temps) : null
+  const tempMax = temps.length > 0 ? Math.max(...temps) : null
 
   return (
-    <Card className="p-4">
-      <div className="text-center text-sm font-semibold mb-3">{dateLabel}</div>
-      <div className="flex justify-center gap-4">
-        {card.periods.map((period) => (
-          <div key={period.label} className="flex flex-col items-center gap-0.5">
-            <div className="text-[10px] text-muted-foreground">{t(period.label.replace("chart.", ""))}</div>
-            <div className="text-2xl">
-              {period.weatherCode !== null ? getWeatherIcon(period.weatherCode, period.isDay) : ""}
-            </div>
-            <div className="text-xs">
-              {period.temperature !== null ? `${period.temperature > 0 ? "+" : ""}${period.temperature}°` : "—"}
-            </div>
-          </div>
-        ))}
-      </div>
-      <PriceStats min={card.priceMin} max={card.priceMax} avg={card.priceAvg} />
+    <Card className={`p-2 sm:p-3 text-center ${isToday ? "ring-2 ring-primary" : ""}`}>
+      <div className="text-[10px] sm:text-xs text-muted-foreground uppercase">{weekday}</div>
+      <div className={`text-sm sm:text-base font-semibold ${isToday ? "text-primary" : ""}`}>{dateNum}</div>
+      {mainIcon && <div className="text-2xl sm:text-3xl my-1">{mainIcon}</div>}
+      {tempMin !== null && tempMax !== null && (
+        <div className="text-[10px] sm:text-xs">
+          <span className="text-blue-500">{tempMin > 0 ? "+" : ""}{tempMin}°</span>
+          {" / "}
+          <span className="text-red-500">{tempMax > 0 ? "+" : ""}{tempMax}°</span>
+        </div>
+      )}
+      {card.priceAvg !== null && (
+        <div className="border-t mt-1.5 pt-1.5">
+          <div className="text-xs sm:text-sm font-semibold">{card.priceAvg.toFixed(1)}</div>
+          <div className="text-[8px] sm:text-[10px] text-muted-foreground">{t("centsPerKwh")}</div>
+        </div>
+      )}
     </Card>
   )
 }
@@ -148,7 +161,7 @@ export function WeatherCards({ prices, temperatures, view, loading }: WeatherCar
   if (loading) {
     const skeletonCount = view === "24h" ? 4 : 7
     return (
-      <div className={`grid gap-4 ${view === "24h" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-4" : "grid-cols-1 md:grid-cols-3 lg:grid-cols-4"}`}>
+      <div className={`grid ${view === "24h" ? "gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4" : "gap-2 sm:gap-3 grid-cols-2 sm:grid-cols-4 md:grid-cols-7"}`}>
         {Array.from({ length: skeletonCount }, (_, i) => (
           <SkeletonCard key={i} />
         ))}
@@ -167,13 +180,14 @@ export function WeatherCards({ prices, temperatures, view, loading }: WeatherCar
     )
   }
 
-  // 7d / 30d — daily cards
+  // 7d / 30d — daily cards in calendar layout
   const days = groupByDay(prices, temperatures)
+  const todayKey = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Helsinki" })
 
   return (
-    <div className="grid gap-4 grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
+    <div className="grid gap-2 sm:gap-3 grid-cols-2 sm:grid-cols-4 md:grid-cols-7">
       {days.map((day) => (
-        <DailyCard key={day.dateKey} card={day} locale={locale} />
+        <DailyCard key={day.dateKey} card={day} locale={locale} isToday={day.dateKey === todayKey} />
       ))}
     </div>
   )
