@@ -2,8 +2,10 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
+import { Cloud } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { WeatherCards } from "@/components/WeatherCards"
 import {
   ComposedChart,
   Area,
@@ -73,6 +75,7 @@ export function PriceChart({
   const t = useTranslations()
   const [showTemperature, setShowTemperature] = useState(true)
   const [showHistoricalPrediction, setShowHistoricalPrediction] = useState(false)
+  const [weatherView, setWeatherView] = useState(false)
   const stats = calculateStats(prices)
 
   const now = new Date()
@@ -275,17 +278,42 @@ export function PriceChart({
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-medium">{t("price.priceHistory")}</CardTitle>
-          <Tabs value={view} onValueChange={(v) => onViewChange(v as any)}>
-            <TabsList className="grid grid-cols-3 w-auto">
-              <TabsTrigger value="24h" className="text-xs px-3">{t("chart.24h")}</TabsTrigger>
-              <TabsTrigger value="7d" className="text-xs px-3">{t("chart.7days")}</TabsTrigger>
-              <TabsTrigger value="30d" className="text-xs px-3">{t("chart.30days")}</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <div className="flex items-center gap-2">
+            <Tabs value={view} onValueChange={(v) => onViewChange(v as any)}>
+              <TabsList className="grid grid-cols-3 w-auto">
+                <TabsTrigger value="24h" className="text-xs px-3">{t("chart.24h")}</TabsTrigger>
+                <TabsTrigger value="7d" className="text-xs px-3">{t("chart.7days")}</TabsTrigger>
+                <TabsTrigger value="30d" className="text-xs px-3">{t("chart.30days")}</TabsTrigger>
+              </TabsList>
+            </Tabs>
+            {hasTemperature && (
+              <button
+                onClick={() => setWeatherView(!weatherView)}
+                className={`inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                  weatherView
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted hover:bg-muted/80 text-muted-foreground"
+                }`}
+                title={t("chart.weatherView")}
+              >
+                <Cloud className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">{t("chart.weatherView")}</span>
+              </button>
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent className="px-2 sm:px-4 py-0">
-        {loading ? (
+        {weatherView ? (
+          <div className="py-4">
+            <WeatherCards
+              prices={prices}
+              temperatures={temperatures || []}
+              view={view}
+              loading={loading || false}
+            />
+          </div>
+        ) : loading ? (
           <div className="h-[280px] flex items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
           </div>
