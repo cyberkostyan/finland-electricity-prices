@@ -45,7 +45,12 @@
     "temperatureYourLocation": "Temperature (Your location)",
     "temperatureCity": "Temperature ({city})",
     "lowAlert": "Low alert",
-    "highAlert": "High alert"
+    "highAlert": "High alert",
+    "weatherView": "Weather",
+    "morning": "Morning",
+    "day": "Day",
+    "evening": "Evening",
+    "night": "Night"
   },
   "weather": {
     "clear": "Clear",

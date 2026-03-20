@@ -45,7 +45,12 @@
     "temperatureYourLocation": "Lämpötila (Sijaintisi)",
     "temperatureCity": "Lämpötila ({city})",
     "lowAlert": "Alhainen hälytys",
-    "highAlert": "Korkea hälytys"
+    "highAlert": "Korkea hälytys",
+    "weatherView": "Sää",
+    "morning": "Aamu",
+    "day": "Päivä",
+    "evening": "Ilta",
+    "night": "Yö"
   },
   "weather": {
     "clear": "Selkeä",
