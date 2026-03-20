@@ -195,7 +195,7 @@ export function WeatherCards({ prices, temperatures, view, loading }: WeatherCar
   return (
     <>
       {/* Mobile: horizontal scroll strip */}
-      <div className="flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory md:hidden">
+      <div className="flex gap-2 overflow-x-auto p-1 pb-2 snap-x snap-mandatory md:hidden">
         {days.map((day) => (
           <div key={day.dateKey} className="snap-start shrink-0 w-[100px]">
             <DailyCard card={day} locale={locale} isToday={day.dateKey === todayKey} />
