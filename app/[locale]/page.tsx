@@ -21,6 +21,7 @@ import { Zap, RefreshCw, History, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { LanguageSwitcher } from "@/components/LanguageSwitcher"
+import { LocationBanner } from "@/components/LocationBanner"
 
 export default function Home() {
   const t = useTranslations()
@@ -38,7 +39,7 @@ export default function Home() {
     lowPrice: number
     highPrice: number
   } | undefined>()
-  const { lat, lon, isDefault: isDefaultLocation, cityName, requestLocation } = useGeolocation()
+  const { lat, lon, isDefault: isDefaultLocation, permissionDenied, cityName, requestLocation } = useGeolocation()
 
   const getDateRange = useCallback((view: "24h" | "7d" | "30d") => {
     const now = new Date()
@@ -196,6 +197,9 @@ export default function Home() {
           />
           <BestHours refreshTrigger={refreshTrigger} compact />
         </div>
+
+        {/* Location Banner */}
+        <LocationBanner permissionDenied={permissionDenied} onRequestLocation={requestLocation} />
 
         {/* Chart - Full Width */}
         <PriceChart

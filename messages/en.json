@@ -124,6 +124,11 @@
     "supportProject": "Support the project",
     "privacy": "Privacy"
   },
+  "locationBanner": {
+    "message": "Weather data is shown for Helsinki. Share your location for local weather.",
+    "shareLocation": "Share location",
+    "dismiss": "Dismiss"
+  },
   "privacyBanner": {
     "title": "Your privacy matters.",
     "message": "Analytics are disabled by default. You can enable them in",

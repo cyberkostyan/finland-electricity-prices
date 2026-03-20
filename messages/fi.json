@@ -124,6 +124,11 @@
     "supportProject": "Tue projektia",
     "privacy": "Tietosuoja"
   },
+  "locationBanner": {
+    "message": "Säätiedot näytetään Helsingille. Jaa sijaintisi paikallista säätä varten.",
+    "shareLocation": "Jaa sijainti",
+    "dismiss": "Sulje"
+  },
   "privacyBanner": {
     "title": "Yksityisyytesi on tärkeä.",
     "message": "Analytiikka on oletuksena pois päältä. Voit ottaa sen käyttöön",

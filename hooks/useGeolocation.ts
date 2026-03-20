@@ -17,6 +17,7 @@ interface UseGeolocationResult {
   isDefault: boolean
   loading: boolean
   error: string | null
+  permissionDenied: boolean
   cityName: string | null
   requestLocation: () => void
 }
@@ -61,6 +62,7 @@ export function useGeolocation(): UseGeolocationResult {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [cityName, setCityName] = useState<string | null>(null)
+  const [permissionDenied, setPermissionDenied] = useState(false)
 
   // Check localStorage on mount
   useEffect(() => {
@@ -106,6 +108,7 @@ export function useGeolocation(): UseGeolocationResult {
       },
       (err) => {
         setError(err.message)
+        setPermissionDenied(err.code === GeolocationPositionError.PERMISSION_DENIED)
         setLoading(false)
         // Keep Helsinki defaults
       },
@@ -113,5 +116,5 @@ export function useGeolocation(): UseGeolocationResult {
     )
   }, [])
 
-  return { lat, lon, isDefault, loading, error, cityName, requestLocation }
+  return { lat, lon, isDefault, loading, error, permissionDenied, cityName, requestLocation }
 }
