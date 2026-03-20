@@ -143,7 +143,6 @@ function BlockCard({ card }: { card: ReturnType<typeof groupByBlock>[0] }) {
 }
 
 export function WeatherCards({ prices, temperatures, view, loading }: WeatherCardsProps) {
-  const t = useTranslations()
   const locale = useLocale()
 
   if (loading) {
