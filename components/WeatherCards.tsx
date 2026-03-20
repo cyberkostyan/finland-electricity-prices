@@ -180,12 +180,24 @@ export function WeatherCards({ prices, temperatures, view, loading }: WeatherCar
     )
   }
 
-  // 7d / 30d — daily cards in calendar layout
+  // 7d / 30d — daily cards in calendar layout (weeks start on Monday)
   const days = groupByDay(prices, temperatures)
   const todayKey = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Helsinki" })
 
+  // Calculate empty cells to align first day to its weekday (Mon=0, Sun=6)
+  let startPadding = 0
+  if (days.length > 0) {
+    const [y, m, d] = days[0].dateKey.split("-").map(Number)
+    const firstDayOfWeek = new Date(y, m - 1, d).getDay() // 0=Sun, 1=Mon, ...
+    startPadding = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1 // convert to Mon=0
+  }
+
   return (
     <div className="grid gap-2 sm:gap-3 grid-cols-2 sm:grid-cols-4 md:grid-cols-7">
+      {/* Empty cells for weekday alignment on md+ screens */}
+      {Array.from({ length: startPadding }, (_, i) => (
+        <div key={`pad-${i}`} className="hidden md:block" />
+      ))}
       {days.map((day) => (
         <DailyCard key={day.dateKey} card={day} locale={locale} isToday={day.dateKey === todayKey} />
       ))}
