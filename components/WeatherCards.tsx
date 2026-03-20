@@ -193,14 +193,24 @@ export function WeatherCards({ prices, temperatures, view, loading }: WeatherCar
   }
 
   return (
-    <div className="grid gap-2 sm:gap-3 grid-cols-2 sm:grid-cols-4 md:grid-cols-7">
-      {/* Empty cells for weekday alignment on md+ screens */}
-      {Array.from({ length: startPadding }, (_, i) => (
-        <div key={`pad-${i}`} className="hidden md:block" />
-      ))}
-      {days.map((day) => (
-        <DailyCard key={day.dateKey} card={day} locale={locale} isToday={day.dateKey === todayKey} />
-      ))}
-    </div>
+    <>
+      {/* Mobile: horizontal scroll strip */}
+      <div className="flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory md:hidden">
+        {days.map((day) => (
+          <div key={day.dateKey} className="snap-start shrink-0 w-[100px]">
+            <DailyCard card={day} locale={locale} isToday={day.dateKey === todayKey} />
+          </div>
+        ))}
+      </div>
+      {/* Desktop: calendar grid with Monday start */}
+      <div className="hidden md:grid gap-2 sm:gap-3 grid-cols-7">
+        {Array.from({ length: startPadding }, (_, i) => (
+          <div key={`pad-${i}`} />
+        ))}
+        {days.map((day) => (
+          <DailyCard key={day.dateKey} card={day} locale={locale} isToday={day.dateKey === todayKey} />
+        ))}
+      </div>
+    </>
   )
 }
