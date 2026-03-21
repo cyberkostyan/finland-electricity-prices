@@ -53,6 +53,7 @@ interface ChartDataPoint {
   date: Date
   isCurrent?: boolean
   isPrediction?: boolean
+  isNight?: boolean
 }
 
 // Purple color for temperature (distinct from orange "Now" marker)
@@ -211,6 +212,22 @@ export function PriceChart({
 
   // Combine data
   const chartData: ChartDataPoint[] = [...priceData, ...predictionData]
+
+  // Mark night points using sunTimes data for chart background shading
+  if (Object.keys(sunTimes).length > 0) {
+    for (const point of chartData) {
+      const dateKey = point.date.toLocaleDateString("en-CA", { timeZone: "Europe/Helsinki" })
+      const sun = sunTimes[dateKey]
+      if (sun) {
+        const sunriseTime = new Date(sun.sunrise).getTime()
+        const sunsetTime = new Date(sun.sunset).getTime()
+        const pointTime = point.date.getTime()
+        point.isNight = pointTime < sunriseTime || pointTime >= sunsetTime
+      } else {
+        point.isNight = point.isDay === false
+      }
+    }
+  }
 
   // Check if we have temperature data
   const hasTemperature = chartData.some(d => d.temperature !== undefined)
@@ -425,6 +442,23 @@ export function PriceChart({
                       isAnimationActive={false}
                       connectNulls={true}
                       dot={false}
+                    />
+                  )}
+                  {/* Night zone shading */}
+                  {Object.keys(sunTimes).length > 0 && (
+                    <Area
+                      yAxisId="price"
+                      type="step"
+                      dataKey={(d: ChartDataPoint) => d.isNight ? 99999 : undefined}
+                      stroke="none"
+                      fill="hsl(var(--muted-foreground))"
+                      fillOpacity={0.07}
+                      isAnimationActive={false}
+                      connectNulls={false}
+                      dot={false}
+                      activeDot={false}
+                      legendType="none"
+                      tooltipType="none"
                     />
                   )}
                   {/* Official prices - solid area */}
