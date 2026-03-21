@@ -110,7 +110,14 @@ export async function fetchWeather(
     throw new Error("Failed to fetch weather data")
   }
 
-  return response.json()
+  const data = await response.json()
+
+  // Handle both old format (array) and new format ({ temperatures, sunTimes })
+  if (Array.isArray(data)) {
+    return { temperatures: data, sunTimes: {} }
+  }
+
+  return data as WeatherResponse
 }
 
 export async function fetchHistoricalPredictions(
