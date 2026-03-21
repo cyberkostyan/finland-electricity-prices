@@ -444,22 +444,25 @@ export function PriceChart({
                       dot={false}
                     />
                   )}
-                  {/* Night zone shading */}
+                  {/* Night zone shading — uses hidden Y axis so it doesn't affect price scale */}
                   {Object.keys(sunTimes).length > 0 && (
-                    <Area
-                      yAxisId="price"
-                      type="step"
-                      dataKey={(d: ChartDataPoint) => d.isNight ? 99999 : undefined}
-                      stroke="none"
-                      fill="hsl(var(--muted-foreground))"
-                      fillOpacity={0.07}
-                      isAnimationActive={false}
-                      connectNulls={false}
-                      dot={false}
-                      activeDot={false}
-                      legendType="none"
-                      tooltipType="none"
-                    />
+                    <>
+                      <YAxis yAxisId="night" hide domain={[0, 1]} />
+                      <Area
+                        yAxisId="night"
+                        type="step"
+                        dataKey={(d: ChartDataPoint) => d.isNight ? 1 : 0}
+                        stroke="none"
+                        fill="hsl(var(--muted-foreground))"
+                        fillOpacity={0.07}
+                        isAnimationActive={false}
+                        connectNulls
+                        dot={false}
+                        activeDot={false}
+                        legendType="none"
+                        tooltipType="none"
+                      />
+                    </>
                   )}
                   {/* Official prices - solid area */}
                   <Area
