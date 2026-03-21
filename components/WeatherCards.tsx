@@ -228,7 +228,7 @@ export function WeatherCards({ prices, temperatures, sunTimes = {}, view, loadin
           <div key={`pad-${i}`} />
         ))}
         {days.map((day) => (
-          <DailyCard key={day.dateKey} card={day} locale={locale} isToday={day.dateKey === todayKey} />
+          <DailyCard key={day.dateKey} card={day} locale={locale} isToday={day.dateKey === todayKey} sunrise={sunTimes[day.dateKey]?.sunrise} sunset={sunTimes[day.dateKey]?.sunset} />
         ))}
       </div>
     </>
