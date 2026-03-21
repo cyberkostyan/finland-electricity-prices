@@ -151,7 +151,7 @@ function DailyCard({ card, locale, isToday, sunrise, sunset }: {
   )
 }
 
-function BlockCard({ card }: { card: ReturnType<typeof groupByBlock>[0] }) {
+function BlockCard({ card, sunLabel }: { card: ReturnType<typeof groupByBlock>[0]; sunLabel?: string }) {
   const t = useTranslations()
 
   return (
@@ -168,6 +168,9 @@ function BlockCard({ card }: { card: ReturnType<typeof groupByBlock>[0] }) {
         </div>
         {card.weatherCode !== null && (
           <div className="text-xs text-muted-foreground">{t(getWeatherLabelKey(card.weatherCode))}</div>
+        )}
+        {sunLabel && (
+          <div className="text-[10px] text-muted-foreground mt-0.5">{sunLabel}</div>
         )}
       </div>
       <PriceStats min={card.priceMin} max={card.priceMax} avg={card.priceAvg} />
@@ -191,11 +194,21 @@ export function WeatherCards({ prices, temperatures, sunTimes = {}, view, loadin
 
   if (view === "24h") {
     const blocks = groupByBlock(prices, temperatures)
+    // Find today's sunrise/sunset for block cards
+    const todayKey = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Helsinki" })
+    const todaySun = sunTimes[todayKey]
+    const sunriseTime = todaySun ? formatSunTime(todaySun.sunrise) : undefined
+    const sunsetTime = todaySun ? formatSunTime(todaySun.sunset) : undefined
+
     return (
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        {blocks.map((block) => (
-          <BlockCard key={block.label} card={block} />
-        ))}
+        {blocks.map((block) => {
+          // Show sunrise on Morning block, sunset on Evening block
+          let sunLabel: string | undefined
+          if (block.label === "chart.morning" && sunriseTime) sunLabel = `☀↑ ${sunriseTime}`
+          if (block.label === "chart.evening" && sunsetTime) sunLabel = `☀↓ ${sunsetTime}`
+          return <BlockCard key={block.label} card={block} sunLabel={sunLabel} />
+        })}
       </div>
     )
   }
