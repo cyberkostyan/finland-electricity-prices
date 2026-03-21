@@ -11,6 +11,11 @@ interface OpenMeteoResponse {
     weather_code: number[]
     is_day: number[]
   }
+  daily?: {
+    time: string[]
+    sunrise: string[]
+    sunset: string[]
+  }
 }
 
 export async function GET(request: Request) {
@@ -25,7 +30,7 @@ export async function GET(request: Request) {
     const clampedLat = Math.max(-90, Math.min(90, lat))
     const clampedLon = Math.max(-180, Math.min(180, lon))
 
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${clampedLat}&longitude=${clampedLon}&hourly=temperature_2m,weather_code,is_day&past_days=${pastDays}&forecast_days=${forecastDays}&timezone=Europe%2FHelsinki`
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${clampedLat}&longitude=${clampedLon}&hourly=temperature_2m,weather_code,is_day&daily=sunrise,sunset&past_days=${pastDays}&forecast_days=${forecastDays}&timezone=Europe%2FHelsinki`
 
     const response = await fetch(url, {
       next: { revalidate: 3600 }, // Cache for 1 hour
@@ -45,7 +50,18 @@ export async function GET(request: Request) {
       isDay: data.hourly.is_day[index] === 1,
     }))
 
-    return NextResponse.json(temperatures)
+    // Build sunrise/sunset map by date
+    const sunTimes: Record<string, { sunrise: string; sunset: string }> = {}
+    if (data.daily) {
+      data.daily.time.forEach((date, i) => {
+        sunTimes[date] = {
+          sunrise: data.daily!.sunrise[i],
+          sunset: data.daily!.sunset[i],
+        }
+      })
+    }
+
+    return NextResponse.json({ temperatures, sunTimes })
   } catch (error) {
     console.error("Weather API error:", error)
     return NextResponse.json(

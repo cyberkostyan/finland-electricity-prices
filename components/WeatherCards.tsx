@@ -2,13 +2,14 @@
 
 import { useTranslations, useLocale } from "next-intl"
 import { Card } from "@/components/ui/card"
-import { PriceData, TemperatureData } from "@/lib/api"
+import { PriceData, TemperatureData, type SunTimes } from "@/lib/api"
 import { getWeatherIcon, getWeatherLabelKey } from "@/lib/weather"
 import { groupByDay, groupByBlock } from "@/lib/weather-grouping"
 
 interface WeatherCardsProps {
   prices: PriceData[]
   temperatures: TemperatureData[]
+  sunTimes?: SunTimes
   view: "24h" | "7d" | "30d"
   loading: boolean
 }
@@ -85,7 +86,19 @@ function SkeletonCard() {
   )
 }
 
-function DailyCard({ card, locale, isToday }: { card: ReturnType<typeof groupByDay>[0]; locale: string; isToday: boolean }) {
+function formatSunTime(isoTime: string): string {
+  // isoTime is like "2026-03-21T06:15" — extract HH:MM
+  const match = isoTime.match(/T(\d{2}:\d{2})/)
+  return match ? match[1] : ""
+}
+
+function DailyCard({ card, locale, isToday, sunrise, sunset }: {
+  card: ReturnType<typeof groupByDay>[0]
+  locale: string
+  isToday: boolean
+  sunrise?: string
+  sunset?: string
+}) {
   const t = useTranslations("price")
 
   // Parse YYYY-MM-DD dateKey and format for display
@@ -119,6 +132,13 @@ function DailyCard({ card, locale, isToday }: { card: ReturnType<typeof groupByD
           <span className="text-blue-500">{tempMin > 0 ? "+" : ""}{tempMin}°</span>
           {" / "}
           <span className="text-red-500">{tempMax > 0 ? "+" : ""}{tempMax}°</span>
+        </div>
+      )}
+      {(sunrise || sunset) && (
+        <div className="text-[9px] sm:text-[10px] text-muted-foreground mt-0.5">
+          {sunrise && <span>☀↑{formatSunTime(sunrise)}</span>}
+          {sunrise && sunset && " "}
+          {sunset && <span>☀↓{formatSunTime(sunset)}</span>}
         </div>
       )}
       {card.priceAvg !== null && (
@@ -155,7 +175,7 @@ function BlockCard({ card }: { card: ReturnType<typeof groupByBlock>[0] }) {
   )
 }
 
-export function WeatherCards({ prices, temperatures, view, loading }: WeatherCardsProps) {
+export function WeatherCards({ prices, temperatures, sunTimes = {}, view, loading }: WeatherCardsProps) {
   const locale = useLocale()
 
   if (loading) {
@@ -198,7 +218,7 @@ export function WeatherCards({ prices, temperatures, view, loading }: WeatherCar
       <div className="flex gap-2 overflow-x-auto p-1 pb-2 snap-x snap-mandatory md:hidden">
         {days.map((day) => (
           <div key={day.dateKey} className="snap-start shrink-0 w-[100px]">
-            <DailyCard card={day} locale={locale} isToday={day.dateKey === todayKey} />
+            <DailyCard card={day} locale={locale} isToday={day.dateKey === todayKey} sunrise={sunTimes[day.dateKey]?.sunrise} sunset={sunTimes[day.dateKey]?.sunset} />
           </div>
         ))}
       </div>

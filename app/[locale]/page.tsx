@@ -14,6 +14,7 @@ import {
   type PriceData,
   type TemperatureData,
   type HistoricalPrediction,
+  type SunTimes,
 } from "@/lib/api"
 import { useGeolocation } from "@/hooks/useGeolocation"
 import { Link } from "@/i18n/navigation"
@@ -29,6 +30,7 @@ export default function Home() {
   const [predictions, setPredictions] = useState<PriceData[]>([])
   const [historicalPredictions, setHistoricalPredictions] = useState<HistoricalPrediction[]>([])
   const [temperatures, setTemperatures] = useState<TemperatureData[]>([])
+  const [sunTimes, setSunTimes] = useState<SunTimes>({})
   const [view, setView] = useState<"24h" | "7d" | "30d">("24h")
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -87,13 +89,14 @@ export default function Home() {
           fetchPrices(start, end),
           fetchPredictions().catch(() => []), // Don't fail if predictions unavailable
           fetchHistoricalPredictions(start, end).catch(() => []), // Fetch for full price range (prices are known ahead from NordPool)
-          fetchWeather(view, lat, lon).catch(() => []), // Don't fail if weather unavailable
+          fetchWeather(view, lat, lon).catch(() => ({ temperatures: [], sunTimes: {} })), // Don't fail if weather unavailable
         ])
 
         setPrices(pricesData)
         setPredictions(predictionsData)
         setHistoricalPredictions(historicalPredData)
-        setTemperatures(weatherData)
+        setTemperatures(weatherData.temperatures)
+        setSunTimes(weatherData.sunTimes)
         setLastUpdate(new Date())
         setRefreshTrigger((t) => t + 1)
       } catch (error) {
@@ -207,6 +210,7 @@ export default function Home() {
           predictions={predictions}
           historicalPredictions={historicalPredictions}
           temperatures={temperatures}
+          sunTimes={sunTimes}
           view={view}
           onViewChange={setView}
           loading={loading}

@@ -17,7 +17,7 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from "recharts"
-import { PriceData, TemperatureData, HistoricalPrediction, calculateStats } from "@/lib/api"
+import { PriceData, TemperatureData, HistoricalPrediction, calculateStats, type SunTimes } from "@/lib/api"
 import { getWeatherIcon, getWeatherLabelKey } from "@/lib/weather"
 import { formatPrice } from "@/lib/utils"
 
@@ -26,6 +26,7 @@ interface PriceChartProps {
   predictions?: PriceData[]
   historicalPredictions?: HistoricalPrediction[]
   temperatures?: TemperatureData[]
+  sunTimes?: SunTimes
   view: "24h" | "7d" | "30d"
   onViewChange: (view: "24h" | "7d" | "30d") => void
   loading?: boolean
@@ -64,6 +65,7 @@ export function PriceChart({
   predictions = [],
   historicalPredictions = [],
   temperatures = [],
+  sunTimes = {},
   view,
   onViewChange,
   loading,
@@ -309,6 +311,7 @@ export function PriceChart({
             <WeatherCards
               prices={prices}
               temperatures={temperatures || []}
+              sunTimes={sunTimes}
               view={view}
               loading={loading || false}
             />

@@ -16,6 +16,13 @@ export interface TemperatureData {
   isDay?: boolean
 }
 
+export type SunTimes = Record<string, { sunrise: string; sunset: string }>
+
+export interface WeatherResponse {
+  temperatures: TemperatureData[]
+  sunTimes: SunTimes
+}
+
 export interface HistoricalPrediction {
   date: string
   value: number
@@ -68,7 +75,7 @@ export async function fetchWeather(
   view: "24h" | "7d" | "30d",
   lat?: number,
   lon?: number
-): Promise<TemperatureData[]> {
+): Promise<WeatherResponse> {
   // Adjust past_days and forecast_days based on view
   let pastDays: number
   let forecastDays: number
