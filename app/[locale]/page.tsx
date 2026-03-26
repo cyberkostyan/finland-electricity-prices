@@ -248,6 +248,10 @@ export default function Home() {
             <Link href="/privacy" className="underline hover:text-foreground">
               {t("footer.privacy")}
             </Link>
+            {" • "}
+            <Link href="/connect" className="underline hover:text-foreground">
+              {t("footer.connectAI")}
+            </Link>
           </p>
           <div className="mt-4">
             <a
