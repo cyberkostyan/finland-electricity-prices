@@ -138,12 +138,26 @@
     "copyUrl": "Kopioi URL",
     "copied": "Kopioitu!",
     "instructions": {
-      "title": "Näin yhdistät",
-      "step1": "Avaa Claude Desktop -asetukset",
-      "step2": "Siirry kohtaan Connectors",
-      "step3": "Napsauta \"Add Custom Integration\"",
-      "step4": "Liitä yllä oleva URL ja tallenna"
+      "title": "Näin yhdistät"
     },
+    "claude": {
+      "step1": "Avaa Claude Desktop tai claude.ai",
+      "step2": "Siirry kohtaan Settings → Connectors",
+      "step3": "Napsauta \"Add Custom Integration\"",
+      "step4": "Liitä MCP URL ja tallenna"
+    },
+    "codex": {
+      "step1": "Avaa terminaali",
+      "step2": "Suorita alla oleva komento MCP-palvelimen lisäämiseksi:",
+      "step3": "Käynnistä Codex CLI uudelleen"
+    },
+    "gemini": {
+      "step1": "Avaa Gemini CLI -asetustiedosto:",
+      "step2": "Lisää MCP-palvelimen asetukset:",
+      "step3": "Käynnistä Gemini CLI uudelleen"
+    },
+    "configFile": "Asetustiedosto",
+    "orAddManually": "Tai lisää manuaalisesti tiedostoon",
     "examples": {
       "title": "Esimerkkikyselyt",
       "example1": "Mikä on sähkön hinta nyt Suomessa?",

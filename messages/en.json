@@ -138,12 +138,26 @@
     "copyUrl": "Copy URL",
     "copied": "Copied!",
     "instructions": {
-      "title": "How to connect",
-      "step1": "Open Claude Desktop settings",
-      "step2": "Go to Connectors",
-      "step3": "Click \"Add Custom Integration\"",
-      "step4": "Paste the URL above and save"
+      "title": "How to connect"
     },
+    "claude": {
+      "step1": "Open Claude Desktop or claude.ai",
+      "step2": "Go to Settings → Connectors",
+      "step3": "Click \"Add Custom Integration\"",
+      "step4": "Paste the MCP URL and save"
+    },
+    "codex": {
+      "step1": "Open your terminal",
+      "step2": "Run the command below to add the MCP server:",
+      "step3": "Restart Codex CLI to apply changes"
+    },
+    "gemini": {
+      "step1": "Open Gemini CLI config file:",
+      "step2": "Add the MCP server configuration:",
+      "step3": "Restart Gemini CLI to apply changes"
+    },
+    "configFile": "Config file",
+    "orAddManually": "Or add manually to",
     "examples": {
       "title": "Example queries",
       "example1": "What's the current electricity price in Finland?",
