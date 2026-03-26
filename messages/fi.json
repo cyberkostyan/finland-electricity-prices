@@ -128,7 +128,28 @@
     "predictions": "Ennusteet",
     "vatNote": "Hinnat sisältävät 25,5% ALV. Ajat Suomen aikaa (EET/EEST).",
     "supportProject": "Tue projektia",
-    "privacy": "Tietosuoja"
+    "privacy": "Tietosuoja",
+    "connectAI": "Yhdistä tekoäly"
+  },
+  "connect": {
+    "title": "Yhdistä tekoäly Spothintaan",
+    "description": "Kysy reaaliaikaisia sähkön hintoja tekoälyavustajaltasi",
+    "mcpUrl": "MCP-palvelimen URL",
+    "copyUrl": "Kopioi URL",
+    "copied": "Kopioitu!",
+    "instructions": {
+      "title": "Näin yhdistät",
+      "step1": "Avaa Claude Desktop -asetukset",
+      "step2": "Siirry kohtaan Connectors",
+      "step3": "Napsauta \"Add Custom Integration\"",
+      "step4": "Liitä yllä oleva URL ja tallenna"
+    },
+    "examples": {
+      "title": "Esimerkkikyselyt",
+      "example1": "Mikä on sähkön hinta nyt Suomessa?",
+      "example2": "Näytä tämän päivän tuntihinnat",
+      "example3": "Vertaa viime viikon hintoja"
+    }
   },
   "locationBanner": {
     "message": "Säätiedot näytetään Helsingille. Jaa sijaintisi paikallista säätä varten.",

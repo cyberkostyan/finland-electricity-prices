@@ -128,7 +128,28 @@
     "predictions": "Predictions",
     "vatNote": "Prices include 25.5% VAT. All times in Finnish time (EET/EEST).",
     "supportProject": "Support the project",
-    "privacy": "Privacy"
+    "privacy": "Privacy",
+    "connectAI": "Connect AI"
+  },
+  "connect": {
+    "title": "Connect AI to Spothinta",
+    "description": "Query real-time Finnish electricity prices from your AI assistant",
+    "mcpUrl": "MCP Server URL",
+    "copyUrl": "Copy URL",
+    "copied": "Copied!",
+    "instructions": {
+      "title": "How to connect",
+      "step1": "Open Claude Desktop settings",
+      "step2": "Go to Connectors",
+      "step3": "Click \"Add Custom Integration\"",
+      "step4": "Paste the URL above and save"
+    },
+    "examples": {
+      "title": "Example queries",
+      "example1": "What's the current electricity price in Finland?",
+      "example2": "Show me today's hourly prices",
+      "example3": "Compare prices from last week"
+    }
   },
   "locationBanner": {
     "message": "Weather data is shown for Helsinki. Share your location for local weather.",
