@@ -14,6 +14,8 @@ export interface TemperatureData {
   temperature: number
   weatherCode?: number
   isDay?: boolean
+  windSpeed?: number
+  windDirection?: number
 }
 
 export type SunTimes = Record<string, { sunrise: string; sunset: string }>

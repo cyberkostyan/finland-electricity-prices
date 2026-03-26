@@ -5,6 +5,8 @@ export interface WeatherPeriod {
   temperature: number | null
   weatherCode: number | null
   isDay: boolean
+  windSpeed: number | null
+  windDirection: number | null
 }
 
 export interface DailyWeatherCard {
@@ -21,6 +23,8 @@ export interface BlockWeatherCard {
   temperature: number | null
   weatherCode: number | null
   isDay: boolean
+  windSpeed: number | null
+  windDirection: number | null
   priceMin: number | null
   priceMax: number | null
   priceAvg: number | null
@@ -91,6 +95,8 @@ export function groupByDay(
         temperature: rep ? Math.round(rep.temperature) : null,
         weatherCode: rep?.weatherCode ?? null,
         isDay: rep?.isDay ?? cfg.isDay,
+        windSpeed: rep?.windSpeed ?? null,
+        windDirection: rep?.windDirection ?? null,
       }
     })
 
@@ -136,12 +142,21 @@ export function groupByBlock(
 
     const stats = calcStats(blockPrices)
 
+    // Average wind speed for the block
+    const windTemps = blockTemps.filter((t) => t.windSpeed != null)
+    const avgWind =
+      windTemps.length > 0
+        ? Math.round(windTemps.reduce((sum, t) => sum + t.windSpeed!, 0) / windTemps.length)
+        : null
+
     return {
       label: cfg.key,
       timeRange: cfg.range,
       temperature: avgTemp,
       weatherCode: rep?.weatherCode ?? null,
       isDay: rep?.isDay ?? cfg.isDay,
+      windSpeed: avgWind,
+      windDirection: rep?.windDirection ?? null,
       priceMin: stats.min,
       priceMax: stats.max,
       priceAvg: stats.avg,

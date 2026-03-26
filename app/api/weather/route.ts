@@ -10,6 +10,8 @@ interface OpenMeteoResponse {
     temperature_2m: number[]
     weather_code: number[]
     is_day: number[]
+    wind_speed_10m: number[]
+    wind_direction_10m: number[]
   }
   daily?: {
     time: string[]
@@ -30,7 +32,7 @@ export async function GET(request: Request) {
     const clampedLat = Math.max(-90, Math.min(90, lat))
     const clampedLon = Math.max(-180, Math.min(180, lon))
 
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${clampedLat}&longitude=${clampedLon}&hourly=temperature_2m,weather_code,is_day&daily=sunrise,sunset&past_days=${pastDays}&forecast_days=${forecastDays}&timezone=Europe%2FHelsinki`
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${clampedLat}&longitude=${clampedLon}&hourly=temperature_2m,weather_code,is_day,wind_speed_10m,wind_direction_10m&daily=sunrise,sunset&past_days=${pastDays}&forecast_days=${forecastDays}&timezone=Europe%2FHelsinki`
 
     const response = await fetch(url, {
       next: { revalidate: 3600 }, // Cache for 1 hour
@@ -48,6 +50,8 @@ export async function GET(request: Request) {
       temperature: data.hourly.temperature_2m[index],
       weatherCode: data.hourly.weather_code[index],
       isDay: data.hourly.is_day[index] === 1,
+      windSpeed: data.hourly.wind_speed_10m[index],
+      windDirection: data.hourly.wind_direction_10m[index],
     }))
 
     // Build sunrise/sunset map by date

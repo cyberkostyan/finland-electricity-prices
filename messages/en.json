@@ -60,7 +60,8 @@
     "drizzle": "Drizzle",
     "rain": "Rain",
     "snow": "Snow",
-    "thunderstorm": "Thunderstorm"
+    "thunderstorm": "Thunderstorm",
+    "windUnit": "m/s"
   },
   "bestHours": {
     "title": "Best Hours",

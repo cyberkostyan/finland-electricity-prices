@@ -92,6 +92,13 @@ function formatSunTime(isoTime: string): string {
   return match ? match[1] : ""
 }
 
+function getWindDirectionArrow(degrees: number): string {
+  // Wind direction is where wind comes FROM, arrow shows where it blows TO
+  const arrows = ["↓", "↙", "←", "↖", "↑", "↗", "→", "↘"]
+  const index = Math.round(degrees / 45) % 8
+  return arrows[index]
+}
+
 function DailyCard({ card, locale, isToday, sunrise, sunset }: {
   card: ReturnType<typeof groupByDay>[0]
   locale: string
@@ -100,6 +107,7 @@ function DailyCard({ card, locale, isToday, sunrise, sunset }: {
   sunset?: string
 }) {
   const t = useTranslations("price")
+  const tw = useTranslations("weather")
 
   // Parse YYYY-MM-DD dateKey and format for display
   const [year, month, day] = card.dateKey.split("-").map(Number)
@@ -134,6 +142,18 @@ function DailyCard({ card, locale, isToday, sunrise, sunset }: {
           <span className="text-red-500">{tempMax > 0 ? "+" : ""}{tempMax}°</span>
         </div>
       )}
+      {(() => {
+        const dayPeriodWind = card.periods[2] // chart.day period
+        const windSpeed = dayPeriodWind?.windSpeed
+        const windDir = dayPeriodWind?.windDirection
+        if (windSpeed == null) return null
+        return (
+          <div className="text-[9px] sm:text-[10px] text-muted-foreground mt-0.5">
+            {windDir != null && <span>{getWindDirectionArrow(windDir)}</span>}
+            {" "}{Math.round(windSpeed)} {tw("windUnit")}
+          </div>
+        )
+      })()}
       {(sunrise || sunset) && (
         <div className="text-[9px] sm:text-[10px] text-muted-foreground mt-0.5">
           {sunrise && <span>☀↑{formatSunTime(sunrise)}</span>}
@@ -168,6 +188,12 @@ function BlockCard({ card, sunLabel }: { card: ReturnType<typeof groupByBlock>[0
         </div>
         {card.weatherCode !== null && (
           <div className="text-xs text-muted-foreground">{t(getWeatherLabelKey(card.weatherCode))}</div>
+        )}
+        {card.windSpeed != null && (
+          <div className="text-xs text-muted-foreground mt-0.5">
+            {card.windDirection != null && <span>{getWindDirectionArrow(card.windDirection)}</span>}
+            {" "}{card.windSpeed} {t("weather.windUnit")}
+          </div>
         )}
         {sunLabel && (
           <div className="text-[10px] text-muted-foreground mt-0.5">{sunLabel}</div>

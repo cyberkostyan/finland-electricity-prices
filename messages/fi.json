@@ -60,7 +60,8 @@
     "drizzle": "Tihku",
     "rain": "Sade",
     "snow": "Lumi",
-    "thunderstorm": "Ukkonen"
+    "thunderstorm": "Ukkonen",
+    "windUnit": "m/s"
   },
   "bestHours": {
     "title": "Parhaat tunnit",
